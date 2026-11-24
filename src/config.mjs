@@ -24,7 +24,7 @@ export const config = {
     // Paste only the real tag's content value; blank values emit no verification tag.
     // Build-time GOOGLE_SITE_VERIFICATION / BING_SITE_VERIFICATION / NAVER_SITE_VERIFICATION override these.
     verificationFiles: ['googlea6320f79a65144c0.html'],
-    verification: { google: 'GZtOlof2psXb4fhzjeMBUwSEOzaNF2egR0nn7RhqxXA', bing: '', naver: '' },
+    verification: { google: 'GZtOlof2psXb4fhzjeMBUwSEOzaNF2egR0nn7RhqxXA', bing: 'CCCA485D34D5755BB1290AC1AAE0EE38', naver: '' },
   },
   policies: {
     'app-privacy': { status: 'final', version: '1.0', effectiveDate: '2026-11-01', file: 'APP-PRIVACY-1.0.md' },
