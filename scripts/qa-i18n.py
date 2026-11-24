@@ -33,6 +33,7 @@ with sync_playwright() as p:
                 if name == 'index' and width in [1440,390]:
                     page.screenshot(path=str(QA / f'i18n-{locale}-{width}.png'), full_page=True)
             if name == 'index':
+                page.locator('.sample-library details summary').click()
                 expected = page.locator('[data-demo-title]').inner_text()
                 page.locator('[data-demo=study]').click()
                 assert page.locator('[data-demo-title]').inner_text() != expected

@@ -8,7 +8,7 @@ const documents = [
   ['app-privacy','Windows 앱 개인정보처리방침','APP-PRIVACY-1.0.md','Windows 로컬 문서·작업 데이터, 지원 문의와 Zoho 메일의 처리 내용을 설명합니다.'],
   ['android-app-privacy','Android 앱 개인정보처리방침','APP-PRIVACY-ANDROID-1.0.md','Android 문서·미디어·카메라·마이크·파일 접근과 지원 문의의 처리 내용을 설명합니다.'],
   ['eula','소프트웨어 이용약관','EULA.md','무료 사용권, 이용자 문서의 권리와 이용 조건을 설명합니다.'],
-  ['license','무료 배포 및 라이선스 정책','DISTRIBUTION-AND-LICENSE-POLICY.md','공개판 무료 이용, 향후 플랫폼별 Free/Pro 구성과 기존 문서 보존 원칙을 안내합니다.'],
+  ['license','배포 및 라이선스 정책','DISTRIBUTION-AND-LICENSE-POLICY.md','Windows Free·Pro 이용, Android 제공 계획과 기존 문서 보존 원칙을 안내합니다.'],
   ['lifecycle','지원 수명주기 및 업데이트 정책','SUPPORT-LIFECYCLE-AND-UPDATES.md','지원 기간, 업데이트, 지원 종료와 주요 버전 업그레이드 절차를 설명합니다.'],
 ];
 const destinations = Object.fromEntries(documents.map(([id,,file]) => [file, `${id}.html`]));

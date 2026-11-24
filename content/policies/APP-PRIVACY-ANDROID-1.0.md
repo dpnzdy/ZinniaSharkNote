@@ -1,14 +1,14 @@
 # ZinniaShark Note Android 앱 개인정보처리방침
 
-문서 버전: 1.0
+문서 버전: 1.1
 
-시행일: 2026년 11월 13일
+적용 대상: Google Play 결제를 포함한 Android 앱 버전부터
 
 공식 방침 주소: [ZinniaShark Note Android 개인정보처리방침](https://dpnzdy.github.io/ZinniaSharkNote/android-app-privacy.html)
 
 ## 1. 적용 범위와 처리 주체
 
-이 방침은 Android용 ZinniaShark Note의 로컬 문서 처리와 제품 관련 지원 문의에 적용합니다. 앱 계정 등록, 광고 및 앱 내 구매 기능은 없습니다. Android 앱의 Google Play 공개 배포는 준비 단계이며, 개인정보처리방침 공개가 앱 출시나 심사 승인을 뜻하지는 않습니다.
+이 방침은 Android용 ZinniaShark Note의 로컬 문서 처리와 제품 관련 지원 문의에 적용합니다. 별도 앱 계정이나 광고 없이 이용하며, 선택적으로 Google Play에서 Android용 Pro 이용권을 구매할 수 있습니다. Android 앱의 Google Play 공개 배포는 준비 단계이며, 개인정보처리방침 공개가 앱 출시나 심사 승인을 뜻하지는 않습니다.
 
 Windows용 앱의 데이터 처리에는 [Windows 앱 개인정보처리방침](https://dpnzdy.github.io/ZinniaSharkNote/app-privacy.html)이 적용됩니다. 웹사이트 방문에 대한 안내는 [웹사이트 개인정보 안내](https://dpnzdy.github.io/ZinniaSharkNote/privacy.html)에서 별도로 제공합니다.
 
@@ -21,6 +21,10 @@ Windows용 앱의 데이터 처리에는 [Windows 앱 개인정보처리방침](
 | 문의·권리 행사 | dpnzdy@zinniashark.com |
 
 ## 2. 앱의 기기 내 처리와 이용자 선택
+
+### Google Play 구매와 복원
+
+구매와 구독 결제는 Google Play가 처리합니다. 앱은 Play 결제 서비스를 통해 상품 ID, 구매 상태, 서명된 구매 내역과 구매 토큰을 받아 기기에서 이용권을 확인하고 Google Play에 구매 처리를 확인합니다. 결제 카드나 계좌 정보는 앱에 입력하지 않습니다. 영구 이용권의 서명된 구매 내역은 오프라인 이용을 위해 앱 전용 저장소에 보관하며, Play 조회에서 보유하지 않은 것으로 확인되거나 앱 데이터를 삭제하면 제거됩니다. 구독 보유 여부는 앱 사용 중 다시 확인합니다. Google Play 결제 라이브러리에는 네트워크 통신 구성요소가 포함되며, 결제 서비스의 작동 및 오류 진단을 위해 Google과 통신할 수 있습니다. 개발자의 별도 결제 서버로 구매 토큰이나 문서 내용을 보내지 않습니다. 심사용 코드는 기기 안에서 검사하며 심사용 권한은 현재 실행 세션에만 적용됩니다.
 
 ### 2.1 문서·미디어·기록
 

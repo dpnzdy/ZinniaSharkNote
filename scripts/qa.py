@@ -34,6 +34,7 @@ with sync_playwright() as p:
         page.set_viewport_size({'width':1440,'height':1000})
 
     page.goto(BASE,wait_until='networkidle')
+    page.locator('.sample-library details summary').click()
     page.get_by_role('tab',name='학습 기록').click()
     assert page.locator('[data-demo-title]').inner_text()=='오늘 배운 작은 발견'
     assert page.get_by_role('tabpanel',name='학습 기록').is_visible()

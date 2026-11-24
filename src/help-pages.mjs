@@ -5,7 +5,12 @@ const firstRelease=JSON.parse(readFileSync(new URL('../content/releases/1.0.1.0.
 const currentRelease=release.released?JSON.parse(readFileSync(new URL('../content/releases/'+release.version+'.json',import.meta.url),'utf8')):null;
 
 export function realScreen() {
-  return `<section class="section container actual-screen" id="app-screen"><div class="section-heading"><div><p class="eyebrow">INSIDE ZINNIASHARK NOTE</p><h2>실제 앱에서<br>살펴보세요.</h2></div><p>새 아이콘을 적용한 ZinniaShark Note Windows 1.0.2.0 공개판의 실제 편집 화면입니다.<br>이전 이름이 포함된 기존 공개 샘플 문서를 사용했습니다.</p></div><figure><a href="assets/app-editor-1.0.2.png?v=20261108" target="_blank" rel="noopener" aria-label="실제 앱 편집 화면 원본 보기"><img src="assets/app-editor-1.0.2.png?v=20261108" width="1600" height="1000" loading="lazy" alt="새 아이콘을 적용한 ZinniaShark Note Windows 1.0.2 빌드에서 공개 샘플 ADQ 문서를 편집하는 실제 화면"></a><figcaption>새 아이콘을 적용한 실제 앱 화면 · 1600 × 1000 · 이미지를 선택하면 원본 크기로 볼 수 있습니다.</figcaption></figure></section>`;
+  return `<figure class="editor-example" id="app-screen">
+    <a href="assets/app-editor-1.0.2.png?v=20261108" target="_blank" rel="noopener" aria-label="Windows 편집 화면 원본 크기로 보기">
+      <img src="assets/app-editor-1.0.2.png?v=20261108" width="1600" height="1000" alt="Windows용 ZinniaShark Note에서 글과 이미지가 담긴 공개 예제 문서를 연 화면">
+    </a>
+    <figcaption>Windows 앱의 실제 편집 화면 · 선택하면 확대됩니다.</figcaption>
+  </figure>`;
 }
 export function installSummary() {
   return `<section class="container preparation"><h2>설치와 저장, 먼저 확인하세요</h2><div class="help-grid"><article><h3>Windows Free·Pro</h3><p>${release.summary}</p><a href="download.html#editions">Windows 에디션 비교 보기 →</a></article><article><h3>저장 위치</h3><p>동기화되지 않는 로컬 고정 NTFS 드라이브의 폴더를 사용하세요. OneDrive·네트워크 공유·USB 등 이동식 드라이브는 현재 저장 대상으로 지원하지 않습니다.</p><a href="installation.html#storage">저장 위치 선택하기</a></article><article><h3>WebView2 Runtime</h3><p>편집 화면에 Microsoft Edge WebView2 Evergreen Runtime이 필요합니다. 설치·복구 안내를 확인하세요.</p><a href="installation.html#webview2">설치 조건 확인하기</a></article></div><p class="small-copy">문서는 .adq 형식으로 저장합니다. Word·한글·PDF 가져오기·내보내기는 현재 제공하지 않습니다.</p></section>`;

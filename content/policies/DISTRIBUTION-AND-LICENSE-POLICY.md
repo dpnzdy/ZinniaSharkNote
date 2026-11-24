@@ -1,4 +1,4 @@
-# ZinniaShark Note 무료 배포 및 라이선스 정책
+# ZinniaShark Note 배포 및 라이선스 정책
 
 제품명 정정(2026-11-06): ZinniaShark Note의 이전 이름은 Adequora Writer입니다.
 
