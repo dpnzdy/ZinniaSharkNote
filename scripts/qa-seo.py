@@ -4,12 +4,14 @@ from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 from concurrent.futures import ThreadPoolExecutor
 from html.parser import HTMLParser
-import json, os, xml.etree.ElementTree as ET
+import json, os, subprocess, xml.etree.ElementTree as ET
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parent.parent
 BASE=os.environ.get('SITE_BASE_URL','http://127.0.0.1:4173/').rstrip('/')+'/'
-PUBLIC='https://dpnzdy.github.io/ZinniaSharkNote/'
+CONFIG=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {config} from './src/config.mjs'; console.log(JSON.stringify(config));"],cwd=ROOT,encoding='utf-8'))
+PUBLIC=CONFIG['publicSiteUrl']
+VERIFICATION_FILES=set(CONFIG.get('seo',{}).get('verificationFiles',[]))
 LOCALES=['ko','en','de','es','fr','ja']
 QA=ROOT/'.qa'; QA.mkdir(exist_ok=True)
 FILES=list(ROOT.glob('*.html'))
@@ -42,7 +44,9 @@ for url in urls:
     assert path in served,url
     metadata=Head(served[path])
     assert metadata.canonical==url and not metadata.noindex,url
-assert all(Head(html).canonical in urls for name,html in served.items() if name.endswith('.html') and not Head(html).noindex)
+assert all(Head(html).canonical in urls for name,html in served.items() if name.endswith('.html') and name not in VERIFICATION_FILES and not Head(html).noindex)
+for name in VERIFICATION_FILES:
+    assert served[name].strip()==f'google-site-verification: {name}'
 print(f'PASS: {len(served)} served files match generated content; valid XML with {len(urls)} canonical indexable URLs',flush=True)
 
 errors=[]
@@ -56,7 +60,7 @@ with sync_playwright() as p:
             page.goto(BASE+f'{locale}/{name}.html',wait_until='networkidle')
             data=json.loads(page.locator('#app-structured-data').text_content())
             apps=[item for item in data['@graph'] if item['@type']=='SoftwareApplication']
-            assert [item['offers']['price'] for item in apps]==[0,15.99]
+            assert [item['offers']['price'] for item in apps]==[0,CONFIG['windowsEditions']['proPriceUSD']]
             assert all('softwareVersion' not in item and 'aggregateRating' not in item for item in apps)
             assert page.locator('.site-language-links a').count()==6
             for width in [1440,1024,768,390,320]:

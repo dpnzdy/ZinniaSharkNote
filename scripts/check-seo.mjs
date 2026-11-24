@@ -16,6 +16,12 @@ assert.ok(xml.includes('xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'));
 assert.ok(!/<(?:lastmod|priority|changefreq)>/.test(xml),'No fabricated update dates or ranking hints');
 const listed=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
 assert.equal(new Set(listed).size,listed.length,'No duplicate sitemap URLs');
+for (const file of config.seo?.verificationFiles || []) {
+  assert.match(file,/^google[a-f0-9]+\.html$/);
+  assert.equal((await readFile(new URL(file,root),'utf8')).trim(),`google-site-verification: ${file}`);
+  assert.ok(!listed.includes(new URL(file,config.publicSiteUrl).href),'Verification files are not sitemap content');
+}
+
 const expected=[];
 let documents=0,appPages=0;
 for(const page of pages) {
