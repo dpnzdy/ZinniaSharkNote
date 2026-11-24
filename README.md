@@ -176,3 +176,10 @@ Free 공식 주소는 https://apps.microsoft.com/detail/9NKD9SB9HXMM, Pro는 htt
 검색엔진 인증은 `src/config.mjs`의 `seo.verification`에 각 도구가 발급한 `content` 값만 설정합니다. 또는 `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`, `NAVER_SITE_VERIFICATION` 빌드 환경 변수를 사용할 수 있습니다. 빈 값이면 태그가 나오지 않습니다. Google·Bing의 실제 발급값은 설정에 반영했습니다. 네이버는 프로젝트 경로가 아닌 호스트 루트에서 별도 인증해야 합니다. 계정의 소유권 확인과 사이트맵 제출 완료 여부는 SEO-GUIDE.md의 진행 상태에서 별도로 관리합니다. 자세한 설정·유지 방법은 [SEO-GUIDE.md](SEO-GUIDE.md)의 구현 현황을 참고하세요.
 
 `npm run check`·`npm run check:release`에 SEO 정적 검사가 포함됩니다. `python scripts/qa-seo.py`는 실제 제공 파일·사이트맵 XML·12개 앱 페이지의 모바일 표시와 언어 링크를 확인합니다. 공개 배포 후에는 `SITE_BASE_URL`을 공개 기본 주소로 지정해 같은 검사를 실행합니다.
+
+
+## 검색엔진 실제 등록 (2026-11-24)
+
+Google·Bing·네이버에서 소유권 확인과 사이트맵 제출 접수를 완료했습니다. Google은 공식 HTML 파일 방식으로 확인했으며 `googlea6320f79a65144c0.html`을 유지해야 합니다. Google 사이트맵은 마지막 확인 시 “가져올 수 없음”이 남아 있고, 한국어 홈페이지는 실시간 검사에서 색인 가능을 확인해 색인 생성 요청을 접수했습니다. Bing 사이트맵은 Processing, 네이버는 제출 목록 등록을 확인했습니다. 실제 수집·색인·노출 완료와는 구분합니다.
+
+네이버는 호스트 단위만 등록할 수 있어 사용자 승인으로 별도 공개 저장소 [dpnzdy/dpnzdy.github.io](https://github.com/dpnzdy/dpnzdy.github.io)를 만들었습니다. 루트 안내와 Naver 인증 파일을 게시했으며 기존 앱 URL·대표 주소·DNS 설정은 유지합니다. 계정 정보나 세션은 저장소에 보관하지 않습니다. 상세 상태와 인증 파일 유지 방법은 [SEO-GUIDE.md](SEO-GUIDE.md)의 검색엔진 등록 진행 상태를 참고하세요.
