@@ -18,17 +18,17 @@ destinations['ZOHO-MAIL-VERIFICATION.md']='policies.html#before-publication';
 // Render trusted local Markdown as escaped HTML; no raw HTML or executable URLs.
 function inline(text) {
   return esc(text).replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, target) => {
-    const href=destinations[target] || (/^https:\/\//.test(target) || /^[a-z][a-z0-9-]*\.html(?:#[\w-]+)?$/.test(target) ? target : null);
+    const href=destinations[target] || (/^https:\/\//.test(target) || /^[a-z][a-z0-9-]*\.html(?:[?#][\w=&-]+)?$/.test(target) ? target : null);
     return href ? `<a href="${esc(href)}">${label}</a>` : label;
   }).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/`([^`]+)`/g,'<code>$1</code>');
 }
 function markdown(source) {
   const lines=source.replace(/\r/g,'').split('\n');
-  const result=[];
+  const result=[]; let section=0;
   for(let i=0;i<lines.length;){
     const line=lines[i].trim();
     if(!line || /^# /.test(line)){i++;continue;}
-    if(/^#{2,4} /.test(line)) {const level=line.match(/^#+/)[0].length;result.push(`<h${level}>${inline(line.replace(/^#+ /,''))}</h${level}>`);i++;continue;}
+    if(/^#{2,4} /.test(line)) {const level=line.match(/^#+/)[0].length;result.push(`<h${level} id="policy-section-${++section}">${inline(line.replace(/^#+ /,''))}</h${level}>`);i++;continue;}
     if(line.startsWith('|')) {
       const rows=[];
       while(i<lines.length && lines[i].trim().startsWith('|')) rows.push(lines[i++].trim());
@@ -65,7 +65,7 @@ export const policyPages=documents.map(([id,title,file,description])=>({
   id,title,description,policy:true,policyStatus:policyStatus(id),
   socialImage:id==='android-app-privacy'?'assets/app-icon.webp?v=20261108':undefined,
   socialImageAlt:id==='android-app-privacy'?'ZinniaShark Note 앱 아이콘':undefined,
-  render:()=>`${pageIntro('PRODUCT POLICIES',title,description)}<article class="container legal-content policy-content">${platformLinks(id)}${id==='app-privacy'?'<aside class="policy-version-note" role="note"><strong>Windows 버전 적용 안내</strong><p>아래 1.0 방침의 작업 이어하기 설명은 구버전 기능에 해당합니다. 현재 Windows 앱은 수동 파일 저장을 사용하며 작업 이어하기와 주기적 복구 사본 기록을 제공하지 않습니다. 구버전 자료는 이전 버전 문서 내보내기로 별도 저장할 수 있습니다. 원문 방침의 시행일은 유지하며 현재 저장 방법은 <a href="guide.html#save">사용 가이드</a>를 확인하세요.</p></aside>':''}${policyStatus(id)==='draft'?draftNotice():`<p class="policy-effective">시행일: ${effectiveLabel(id)} · 문서 버전 1.0</p>`}${markdown(readFileSync(new URL(`../content/policies/${file}`,import.meta.url),'utf8'))}<a href="policies.html">정책·라이선스 목록으로</a></article>`,
+  render:(locale='ko')=>`${pageIntro('PRODUCT POLICIES',title,description)}<article class="container legal-content policy-content">${platformLinks(id)}${id==='app-privacy'?'<aside class="policy-version-note" role="note"><strong>Windows 버전 적용 안내</strong><p>아래 1.0 방침의 작업 이어하기 설명은 구버전 기능에 해당합니다. 현재 Windows 앱은 수동 파일 저장을 사용하며 작업 이어하기와 주기적 복구 사본 기록을 제공하지 않습니다. 구버전 자료는 이전 버전 문서 내보내기로 별도 저장할 수 있습니다. 원문 방침의 시행일은 유지하며 현재 저장 방법은 <a href="guide.html#save">사용 가이드</a>를 확인하세요.</p></aside>':''}${policyStatus(id)==='draft'?draftNotice():`<p class="policy-effective">시행일: ${effectiveLabel(id)} · 문서 버전 ${config.policies[id].version}</p>`}${markdown(readFileSync(new URL(`../content/policies/${locale==='en'?'en/':''}${file}`,import.meta.url),'utf8'))}<a href="policies.html">정책·라이선스 목록으로</a></article>`,
 }));
 export const policyIndex={
   id:'policies',policy:true,policyStatus:'draft',title:'정책·라이선스',

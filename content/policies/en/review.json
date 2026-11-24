@@ -1,0 +1,22 @@
+{
+  "app-privacy": {
+    "ko": "7c1fafa53fa17123f98d58a634ff608ca73a92d816b699aa5faac316c402bfc5",
+    "en": "c420b18b3a0d86b5e3ea7143ee4c469049cc1f2bf1f6bcb7c910828af373031c"
+  },
+  "android-app-privacy": {
+    "ko": "9b9752985c5e2e1154e86cf1827aa5043f177faa1e34c4e89d7020964baed8d9",
+    "en": "b56366a82010f38b801506a45d9f205955fd2889ca3d2f88c5c52e2f9214ecd3"
+  },
+  "eula": {
+    "ko": "686b0aa1eb337d9922ac60bf3eecddf249f48bee7d1fa179416fe3085317b997",
+    "en": "bf208be3345ff3577c4ae58b5387da7413575fa3a31134ab68b617feb36505f6"
+  },
+  "license": {
+    "ko": "3d114c127102aa1c39083131a65911afa7c7bde5c6689f3691723108719054f7",
+    "en": "111652baa8482094c314212728b7e9423e7bcdb0549624a356a4d23c34e4873b"
+  },
+  "lifecycle": {
+    "ko": "b30bc3978e7dc52ac55717a1d2530c43c10707f85126e11d843bc1a20b0fdc2f",
+    "en": "51e3e852964f44fd26a7df8db8daaf50ad1fef9365e76c84e0ffe340ef5917a3"
+  }
+}

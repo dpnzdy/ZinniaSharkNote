@@ -4,10 +4,13 @@ import { release } from './release.mjs';
 
 export const locales = ['ko', 'en', 'de', 'es', 'fr', 'ja'];
 export const localizedPageIds = ['index', 'download', 'support', 'guide', 'installation', 'troubleshooting', 'releases', 'development'];
+export const bilingualPageIds = ['policies', 'app-privacy', 'android-app-privacy', 'eula', 'license', 'lifecycle', 'support-consent', 'privacy'];
+export const pageLocales = id => bilingualPageIds.includes(id) ? ['ko', 'en'] : localizedPageIds.includes(id) ? locales : [];
 const nativeNames = ['한국어', 'English', 'Deutsch', 'Español', 'Français', '日本語'];
 const ogLocales = ['ko_KR', 'en_US', 'de_DE', 'es_ES', 'fr_FR', 'ja_JP'];
 const catalogs = Object.fromEntries(locales.slice(1).map(locale => [locale,
   JSON.parse(readFileSync(new URL(`./locales/${locale}.json`, import.meta.url), 'utf8'))]));
+const documentCatalog = JSON.parse(readFileSync(new URL('./locales/en-documents.json', import.meta.url), 'utf8'));
 const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 const decode = text => text.replace(/&(amp|lt|gt|quot|#39);/g, (_, c) => ({amp:'&', lt:'<', gt:'>', quot:'"', '#39':"'"}[c]));
 
@@ -24,7 +27,7 @@ export function translate(source, locale) {
     .replaceAll(release.firstReleaseDateLabel, '{firstReleaseDate}')
     .replaceAll(config.email, '{email}')
     .replace(/© \d{4}/g, '© {year}');
-  const translation = catalogs[locale]?.[key];
+  const translation = catalogs[locale]?.[key] ?? (locale === 'en' ? documentCatalog[key] : undefined);
   if (translation === undefined) {
     if (/[가-힣]/.test(source)) throw new Error(`Missing ${locale} translation: ${key}`);
     return source;
@@ -42,14 +45,22 @@ export function translate(source, locale) {
 }
 
 export function languagePicker(pageId, locale = 'ko', nested = false) {
-  const destination = localizedPageIds.includes(pageId) ? pageId : 'index';
+  const supported = pageLocales(pageId);
+  const destination = supported.length ? pageId : 'index';
   const prefix = nested ? '../' : '';
-  return `<div class="language-control"><label for="site-language">${escape(translate('언어', locale))}</label><select id="site-language" aria-describedby="language-status"><option value="system">${escape(translate('시스템 설정 따르기', locale))}</option>${locales.map((code, i) => `<option value="${code}" lang="${code}"${code === locale ? ' selected' : ''}>${nativeNames[i]}</option>`).join('')}</select><span id="language-status" class="sr-only" role="status"></span><noscript><span class="language-links">${locales.map((code, i) => `<a href="${prefix}${code}/${destination}.html" lang="${code}">${nativeNames[i]}</a>`).join('')}</span></noscript>${!localizedPageIds.includes(pageId) ? `<small class="language-fallback">${escape(translate('이 페이지는 아직 한국어로 제공됩니다. 언어를 선택하면 해당 언어의 소개 페이지로 이동합니다.', locale))}</small>` : ''}</div>`;
+  const links = supported.length === 2 ? supported : locales;
+  return `<div class="language-control"><label for="site-language">${escape(translate('언어', locale))}</label><select id="site-language" aria-describedby="language-status"><option value="system">${escape(translate('시스템 설정 따르기', locale))}</option>${locales.map((code, i) => `<option value="${code}" lang="${code}"${code === locale ? ' selected' : ''}>${nativeNames[i]}</option>`).join('')}</select><span id="language-status" class="sr-only" role="status"></span><noscript><span class="language-links">${links.map(code => `<a href="${prefix}${code}/${destination}.html" lang="${code}">${nativeNames[locales.indexOf(code)]}</a>`).join('')}</span></noscript></div>`;
+}
+
+export function documentLanguages(pageId, locale='ko', nested=false) {
+  if (!bilingualPageIds.includes(pageId)) return '';
+  const en = locale === 'en', prefix=nested?'../':'';
+  return `<!--document-languages--><aside class="container document-languages" aria-label="${en?'Document language':'문서 언어'}"><nav aria-label="${en?'Korean and English documents':'한국어·영어 문서'}">${['ko','en'].map(code=>`<a href="${prefix}${code}/${pageId}.html" lang="${code}" hreflang="${code}" data-document-language="${code}"${code===locale?' aria-current="true"':''}>${code==='ko'?'한국어':'English'}</a>`).join('')}</nav><p>${en?'This is an English reference translation of the Korean original. Translation does not change the original effective dates, scope or draft status. These documents are available in Korean and English; other site languages use English. Your site language preference is retained.':'영문은 한국어 원문의 참고 번역본입니다. 번역으로 원문의 시행일·적용 범위·초안 상태를 변경하지 않습니다. 이 문서는 한국어·영어로 제공하며, 다른 사이트 언어에서는 영어로 연결합니다. 사이트 언어 설정은 유지됩니다.'}</p></aside><!--/document-languages-->`;
 }
 
 export function languageAlternates(pageId) {
-  if (!localizedPageIds.includes(pageId) || !config.publicSiteUrl) return '';
-  return locales.map(locale => `<link rel="alternate" hreflang="${locale}" href="${escape(new URL(`${locale}/${pageId}.html`, config.publicSiteUrl).href)}">`).join('') +
+  if (!pageLocales(pageId).length || !config.publicSiteUrl) return '';
+  return pageLocales(pageId).map(locale => `<link rel="alternate" hreflang="${locale}" href="${escape(new URL(`${locale}/${pageId}.html`, config.publicSiteUrl).href)}">`).join('') +
     `<link rel="alternate" hreflang="x-default" href="${escape(new URL(`${pageId}.html`, config.publicSiteUrl).href)}">`;
 }
 
@@ -75,9 +86,10 @@ function translateMarkup(html, locale) {
 }
 
 export function localizedHtml(page, source, locale) {
-  if (!locales.includes(locale) || !localizedPageIds.includes(page.id)) throw new Error('Unsupported localized page');
+  if (!pageLocales(page.id).includes(locale)) throw new Error('Unsupported localized page');
   // Inject a fresh picker after translating to preserve the native language names.
   source = source.replace(/<div class="language-control">[\s\S]*?<\/noscript><\/div>/, '');
+  source = source.replace(/<!--document-languages-->[\s\S]*?<!--\/document-languages-->/, '');
   // Search visible, translated FAQ text rather than stale Korean search metadata.
   source = source.replace(/ data-search="[^"]*"/g, '');
   let html = translateMarkup(source, locale);
@@ -99,15 +111,17 @@ export function localizedHtml(page, source, locale) {
     if (!value || /^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(value)) return `${attr}="${value}"`;
     if (locales.some(code => value.startsWith(`${code}/`))) return `${attr}="../${value}"`;
     const [file] = value.split(/[?#]/);
+    if (bilingualPageIds.some(id => file === `${id}.html`)) return `${attr}="../${locale==='ko'?'ko':'en'}/${value}"`;
     if (localizedPageIds.some(id => file === `${id}.html`)) return `${attr}="${value}"`;
     return `${attr}="../${value}"`;
   });
-  if (locale !== 'ko') {
-    html = html.replace(/<a\b([^>]*href="\.\.\/[^"#?]+\.html(?:[?#][^"]*)?"[^>]*)>([\s\S]*?)<\/a>/g,
+  if (locale !== 'ko' && !bilingualPageIds.includes(page.id)) {
+    html = html.replace(/<a\b([^>]*href="\.\.\/(?!en\/|ko\/)[^"#?]+\.html(?:[?#][^"]*)?"[^>]*)>([\s\S]*?)<\/a>/g,
       (_, attrs, label) => `<a${attrs} hreflang="ko">${label}<span class="translation-marker"> (${escape(translate('한국어 페이지', locale))})</span></a>`);
-    const notice = `<p class="container translation-notice">${escape(translate('정책·개인정보·선택 자료 안내와 원본 샘플은 현재 한국어로 제공됩니다. 앱 화면은 한국어 원본입니다.', locale))}</p>`;
+    const notice = `<p class="container translation-notice">${escape(translate('정책·개인정보·선택 자료 안내는 한국어·영어로 제공합니다. 원본 샘플과 앱 화면은 한국어입니다.', locale))}</p>`;
     html = html.replace('<main id="main"', `${notice}<main id="main"`);
   }
+  html = html.replace('<main id="main" tabindex="-1">', `<main id="main" tabindex="-1">${documentLanguages(page.id,locale,true)}`);
   html = html.replace('</nav></div></header>', `</nav>${languagePicker(page.id, locale, true)}</div></header>`);
   const messages = JSON.stringify(Object.fromEntries(runtimeKeys.map(key => [key, translate(key, locale)])))
     .replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');

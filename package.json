@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "dev": "node scripts/serve.mjs",
-    "check": "node scripts/check.mjs && node scripts/check-release-state.mjs && node scripts/check-i18n.mjs",
-    "check:release": "node scripts/check.mjs && node scripts/check-i18n.mjs && node scripts/release-check.mjs"
+    "check": "node scripts/check.mjs && node scripts/check-release-state.mjs && node scripts/check-i18n.mjs && node scripts/check-documents.mjs",
+    "check:release": "node scripts/check.mjs && node scripts/check-i18n.mjs && node scripts/release-check.mjs && node scripts/check-documents.mjs"
   }
 }

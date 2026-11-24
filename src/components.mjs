@@ -1,7 +1,7 @@
 import { config } from './config.mjs';
 import { release } from './release.mjs';
 import { policyStatus } from './policy-status.mjs';
-import { languagePicker, languageAlternates } from './i18n.mjs';
+import { languagePicker, languageAlternates, documentLanguages } from './i18n.mjs';
 export const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const paths = {
   arrow: '<path d="M5 12h14m-6-6 6 6-6 6"/>',
@@ -54,7 +54,7 @@ export function shell(page, content) {
   const title=page.id==='index'?'ZinniaShark Note — 글과 자료를 한 문서에':`${page.title} — ZinniaShark Note`;
   const publicUrl=config.publicSiteUrl ? new URL(`${page.id}.html`,config.publicSiteUrl).href : null;
   const sharing=publicUrl ? `<link rel="canonical" href="${esc(publicUrl)}"><meta property="og:url" content="${esc(publicUrl)}"><meta property="og:image" content="${esc(new URL(page.socialImage||'assets/app-editor-1.0.2.png?v=20261108',config.publicSiteUrl).href)}"><meta property="og:image:alt" content="${esc(page.socialImageAlt||'ZinniaShark Note의 실제 문서 편집 화면')}">` : '';
-  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(page.description)}">${page.policy && page.policyStatus!=='final'?'<meta name="robots" content="noindex,follow">':''}<meta name="theme-color" content="#f9fafc">${sharing}${languageAlternates(page.id)}<meta property="og:type" content="website"><meta property="og:locale" content="ko_KR"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(page.description)}"><link rel="icon" type="image/png" href="assets/favicon.png?v=20261108"><link rel="stylesheet" href="assets/style.css"><script src="assets/language.js" defer></script><script src="assets/site.js" defer></script></head><body data-page="${page.id}">${header(page.id)}<main id="main" tabindex="-1">${content}</main>${footer()}<div class="toast" role="status" aria-live="polite" hidden></div></body></html>`;
+  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(page.description)}">${page.policy && page.policyStatus!=='final'?'<meta name="robots" content="noindex,follow">':''}<meta name="theme-color" content="#f9fafc">${sharing}${languageAlternates(page.id)}<meta property="og:type" content="website"><meta property="og:locale" content="ko_KR"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(page.description)}"><link rel="icon" type="image/png" href="assets/favicon.png?v=20261108"><link rel="stylesheet" href="assets/style.css"><script src="assets/language.js" defer></script><script src="assets/site.js" defer></script></head><body data-page="${page.id}">${header(page.id)}<main id="main" tabindex="-1">${documentLanguages(page.id)}${content}</main>${footer()}<div class="toast" role="status" aria-live="polite" hidden></div></body></html>`;
 }
 export const eyebrow = (text, dot = false) => `<p class="eyebrow">${dot?'<span class="status-dot"></span>':''}${text}</p>`;
 export function pageIntro(kicker,title,description) {

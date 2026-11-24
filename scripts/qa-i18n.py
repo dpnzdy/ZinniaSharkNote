@@ -148,7 +148,8 @@ with sync_playwright() as p:
     page.goto(BASE+'app-privacy.html', wait_until='networkidle')
     assert page.url == BASE+'app-privacy.html', 'Policy URLs never redirect'
     page.locator('#site-language').select_option('es')
-    page.wait_for_url('**/es/index.html')
+    page.wait_for_url('**/en/app-privacy.html')
+    assert page.locator('#site-language').input_value() == 'es'
 
     for document, anchor in [('guide','save'),('installation','webview2'),('troubleshooting','resume')]:
         page.goto(BASE+'en/'+document+'.html?help=1#'+anchor,wait_until='networkidle')

@@ -73,7 +73,7 @@ with sync_playwright() as p:
                     page.locator(f'.help-jump a[href="#{section}"]').click()
                     page.wait_for_function('(id)=>location.hash=="#"+id',arg=section)
                     assert page.locator('#'+section).is_visible()
-                assert page.locator('#android a[href="../android-app-privacy.html"][hreflang=ko]').count() == (0 if locale=='ko' else 1)
+                assert page.locator('#android a[href="../'+('ko' if locale=='ko' else 'en')+'/android-app-privacy.html"]').count() == 1
             for width in [1440,1024,768,390,320]:
                 page.set_viewport_size({'width':width,'height':1000 if width>620 else 844})
                 assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'), (locale,name,width)

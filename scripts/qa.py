@@ -177,7 +177,7 @@ with sync_playwright() as p:
     page.locator('#consent-collect').check()
     page.locator('#consent-overseas').check()
     body=parse_qs(urlparse(compose.get_attribute('href')).query)['body'][0]
-    assert 'Android 1.0 / 시행일 2026-11-13' in body
+    assert 'Android 1.1 / 시행일 2026-11-13' in body
     assert '/android-app-privacy.html' in body
     page.locator('#consent-platform').select_option('windows')
     assert compose.is_hidden()
