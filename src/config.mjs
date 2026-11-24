@@ -7,7 +7,12 @@ export const config = {
   email: 'dpnzdy@zinniashark.com',
   releaseStatus: 'released',
   plannedVersion: '1.0',
-  storeUrl: 'https://apps.microsoft.com/detail/9NKD9SB9HXMM',
+  get storeUrl() { return this.windows.free.storeUrl; },
+  windows: {
+    free: { name: 'ZinniaShark Note', storeUrl: 'https://apps.microsoft.com/detail/9NKD9SB9HXMM', blocks: 500, media: 15 },
+    pro: { name: 'ZinniaShark Note Pro', storeUrl: 'https://apps.microsoft.com/detail/9PFRH9QLST85', price: 'USD $15.99', trialDays: 30 },
+  },
+  // Last archived release with a verified version and publication date.
   releaseVersion: '1.0.2.0',
   releaseDate: '2026-11-06',
   publicSiteUrl: 'https://dpnzdy.github.io/ZinniaSharkNote/',

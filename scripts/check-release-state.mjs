@@ -14,10 +14,11 @@ assert.equal(releaseInfo({...config,releaseStatus:'released',storeUrl:storeUrl+'
 const laterRelease=releaseInfo({...config,releaseVersion:'1.0.2.0',releaseDate:'2026-11-06'});
 assert.equal(laterRelease.firstReleaseDate,'2026-11-03','An update must preserve the first publication date');
 assert.equal(laterRelease.date,'2026-11-06');
-assert.ok(laterRelease.priceAnswer.includes('2026년 11월 3일 Microsoft Store에 처음 공개'));
+assert.equal(laterRelease.proStoreUrl, 'https://apps.microsoft.com/detail/9PFRH9QLST85');
+assert.throws(() => releaseInfo({...config, storeUrl: config.windows.pro.storeUrl}));
 const output=execFileSync(process.execPath,['--input-type=module','-e',`
   import {config} from './src/config.mjs';
-  config.releaseStatus='released'; config.storeUrl='${storeUrl}'; config.releaseVersion='1.0.1.0'; config.releaseDate='2026-11-03';
+  config.releaseStatus='released'; config.windows.free.storeUrl='${storeUrl}'; config.releaseVersion='1.0.1.0'; config.releaseDate='2026-11-03';
   config.publicSiteUrl='https://example.com/adequora-writer/';
   const {pages}=await import('./src/pages.mjs');
   const {shell}=await import('./src/components.mjs');
@@ -28,12 +29,12 @@ assert.ok(rendered.download.includes(`href="${storeUrl}"`));
 for(const [id,html] of Object.entries(rendered)) {
   assert.ok(!html.includes('출시 준비 중'),`${id}: stale release status`);
   assert.ok(!html.includes('출시 안내 보기'),`${id}: stale action`);
-  assert.ok(html.includes('1.0.1.0'),`${id}: verified package version`);
+  if (['download','installation','releases'].includes(id)) assert.ok(html.includes('1.0.1.0'),`${id}: verified package version`);
   assert.ok(html.includes(`https://example.com/adequora-writer/${id}.html`),`${id}: subpath-aware canonical`);
 }
 const previewOutput=execFileSync(process.execPath,['--input-type=module','-e',`
   import {config} from './src/config.mjs';
-  config.releaseStatus='coming-soon'; config.storeUrl='${storeUrl}';
+  config.releaseStatus='coming-soon'; config.windows.free.storeUrl='${storeUrl}';
   const {pages}=await import('./src/pages.mjs');
   const {shell}=await import('./src/components.mjs');
   console.log(JSON.stringify(Object.fromEntries(pages.filter(p=>['index','download'].includes(p.id)).map(p=>[p.id,shell(p,p.render())]))));

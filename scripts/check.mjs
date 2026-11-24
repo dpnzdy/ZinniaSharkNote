@@ -34,9 +34,14 @@ else {
   for(const id of ['index','download','support','installation','releases','policies']) {
     const html=await readFile(path.join(root,id+'.html'),'utf8');
     assert.ok(!/출시 준비 중|출시일은 아직|무료 제공을 준비|공개 전에 확정|공개 시 다운로드/.test(html),`${id}: outdated pre-release copy`);
-    assert.ok(html.includes(release.version),`${id}: current public version`);
+    if (['download','installation','releases'].includes(id)) assert.ok(html.includes(release.version),`${id}: archived version`);
   }
-  for(const id of ['index','download','installation','releases']) {
+  for (const id of ['index', 'download']) {
+    const html = await readFile(path.join(root, id + '.html'), 'utf8');
+    assert.ok(html.includes(`href="${release.proStoreUrl}" target="_blank" rel="noopener" data-pro-store-link`), id + ': Pro Store link');
+    assert.ok(html.includes(config.windows.pro.price), id + ': Pro purchase price');
+  }
+  for(const id of ['index','download','releases']) {
     const html=await readFile(path.join(root,id+'.html'),'utf8');
     assert.ok(html.includes(`href="${release.storeUrl}" target="_blank" rel="noopener" data-store-link`),`${id}: direct official Store link`);
   }

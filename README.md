@@ -11,7 +11,8 @@
 - `privacy.html`: 웹사이트 개인정보 안내. 앱 방침과 별개입니다.
 - `installation.html`: Windows x64·WebView2·저장 폴더·첫 문서·업데이트와 제거 준비.
 - `troubleshooting.html`: 실행·저장·열기·미디어·암호·이어하기 문제 해결.
-- `releases.html`: 1.0.2.0 이름 변경 업데이트와 현재 알려진 제한.
+- `releases.html`: 1.0.2.0 이름 변경 업데이트와 공개판의 알려진 제한.
+- `development.html`: 다음 Windows 버전의 저장·복구, Free/Pro 정책, Android 개발 상태와 미디어 한도.
 - `policies.html`: 정책 목록·운영자·공개 전 확정 항목.
 - `app-privacy.html`: 2026년 11월 1일 시행 Windows 앱 개인정보처리방침.
 - `android-app-privacy.html`: 2026년 11월 13일 시행 Android 앱 개인정보처리방침. 정책 공개가 앱 출시를 뜻하지는 않습니다.
@@ -36,7 +37,7 @@ npm run dev
 python scripts/qa.py
 ```
 
-15개 페이지를 1440·768·390·320px에서 확인하고 탭·키보드·미디어 재생/정지·샘플 다운로드 무결성·FAQ·모바일 메뉴·가이드 앵커를 검사합니다. Store 버튼의 주소·새 창 이동, 공개 버전·배포일도 확인합니다. 브라우저의 Store 이동 검사는 외부 응답을 대체하며, 실제 Store 게시 정보는 공식 제품 페이지와 Partner Center에서 별도로 확인했습니다. 클립보드는 API 대체로 성공/실패를 확인합니다. 선택 자료의 두 동의·진단 문의 번호·동의 철회 시 링크 비활성도 검사합니다. 실제 OS 권한·메일 전송·장애 지원 환경 전체를 대신하지 않습니다. 결과와 화면은 ignored `.qa/`에 저장합니다.
+16개 페이지를 1440·768·390·320px에서 확인하고 탭·키보드·미디어 재생/정지·샘플 다운로드 무결성·FAQ·모바일 메뉴·가이드 앵커를 검사합니다. Store 버튼의 주소·새 창 이동, 공개 버전·배포일도 확인합니다. 브라우저의 Store 이동 검사는 외부 응답을 대체하며, 실제 Store 게시 정보는 공식 제품 페이지와 Partner Center에서 별도로 확인했습니다. 클립보드는 API 대체로 성공/실패를 확인합니다. 선택 자료의 두 동의·진단 문의 번호·동의 철회 시 링크 비활성도 검사합니다. 실제 OS 권한·메일 전송·장애 지원 환경 전체를 대신하지 않습니다. 결과와 화면은 ignored `.qa/`에 저장합니다.
 
 ## 콘텐츠 수정
 
@@ -48,7 +49,7 @@ python scripts/qa.py
 - `src/policies.mjs`, `content/policies/`: 정책 화면과 Markdown 원문.
 - `assets/style.css`, `assets/site.js`: 반응형 스타일·메뉴·탭·검색·주소 복사·가이드 목차.
 
-build는 HTML 15개를 생성합니다. 생성 HTML을 직접 편집하지 마세요. docs의 원본 ADQ·HTML은 수정하지 않습니다. 정책 원문은 `../docs-adequora-writer`의 동일 문서에서 복사했으며 수정 시 양쪽을 대조합니다. 앱 개인정보 원본은 `store-submission/APP-PRIVACY-1.0.md`입니다.
+build는 HTML 16개를 생성합니다. 생성 HTML을 직접 편집하지 마세요. docs의 원본 ADQ·HTML은 수정하지 않습니다. 정책 원문은 `../docs-adequora-writer`의 동일 문서에서 복사했으며 수정 시 양쪽을 대조합니다. 앱 개인정보 원본은 `store-submission/APP-PRIVACY-1.0.md`입니다.
 
 ## 웹사이트 공개 전
 
@@ -86,7 +87,7 @@ npm run check:release
 
 다음 업데이트 시에는 공개된 패키지와 날짜를 확인한 뒤 `src/config.mjs`, 해당 버전의 `content/releases/` 기록, `src/help-pages.mjs`의 릴리스 항목을 함께 갱신합니다. 빌드·기술 검사·공개 준비 검사와 브라우저 검사를 수행하고, 원격 반영 후 Store 이동을 다시 확인하세요. 앱 개인정보 방침의 시행일과 다른 약관의 검토 상태를 버전 변경만으로 바꾸지 않습니다.
 
-2.0 Free/Pro는 향후 계획이며 현재 판매·평가판을 제공하지 않습니다.
+Windows 공개판의 지원 안내와 다음 버전 개발 소식은 각각 `src/help-pages.mjs`와 `src/development-page.mjs`에서 관리합니다. 상품과 개발 상태를 변경할 때 개발 소식과 라이선스 초안을 함께 확인합니다.
 
 ## 자료와 처리 방식
 

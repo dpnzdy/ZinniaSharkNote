@@ -47,3 +47,67 @@
 /* Product rename transition; keep existing URLs and layouts. */
 .rename-notice { padding-block: .5rem; font-size: .9rem; overflow-wrap: anywhere; }
 .rename-notice p { margin-block: .35rem; }
+
+html { background: #eff2f5; }
+body { max-width: 1080px; margin-inline: auto; background: white; --ink: #163354; --blue: #1767ac; --blue-dark: #104878; }
+.site-header { background: white; }
+.product-home { padding-block: 24px 40px; }
+.note-lead { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center; padding: clamp(22px,3.6vw,44px); border-block: 1px solid #d6e2ed; background: linear-gradient(120deg,#eaf4ff,#f7faff); }
+.note-name { display: flex; gap: 10px; align-items: center; color: #145084; font-weight: 700; }
+.note-copy h1 { margin: 16px 0; font-size: clamp(2rem,3.5vw,2.95rem); line-height: 1.2; color: var(--ink); }
+.note-copy > p:not(.note-name) { color: #465c72; line-height: 1.75; }
+.note-lead .hero-actions { gap: 8px; margin: 20px 0 12px; }
+.note-lead .button { border-radius: 5px; padding: 11px 14px; }
+.platform-line, .editor-example figcaption { font-size: 13px; }
+.platform-line a, .download-intro a, .platform-news a { color: #14558e; text-decoration: underline; text-underline-offset: 3px; }
+.editor-example { min-width: 0; }
+.editor-example a { display: block; border-radius: 6px; overflow: hidden; border: 1px solid #bfcede; box-shadow: 0 10px 24px #1b4b7420; }
+.editor-example img { width: 100%; display: block; }
+.editor-example figcaption { color: #50657b; margin-top: 10px; }
+.note-features, .sample-library, .platform-news { padding-block: 32px; }
+.note-features h2 { text-align: center; }
+.product-home h2, .download-intro h1 { color: var(--ink); }
+.task-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 20px; }
+.task-cards a, .sample-library details { padding: 22px; border: 1px solid #d6e2ed; border-radius: 7px; }
+.task-cards a:hover { border-color: #1767ac; }
+.task-cards .icon { color: #1767ac; }
+.task-cards h3 { margin: 14px 0 8px; font-size: 18px; }
+.task-cards p, .sample-library > p, .download-intro p { color: #50657b; }
+.sample-library, .platform-news { border-top: 1px solid #d6e2ed; }
+.sample-library details { margin-top: 20px; }
+.sample-library summary { cursor: pointer; color: #14558e; font-weight: 650; }
+.sample-library .product-stage { max-width: 650px; margin: 24px auto; }
+.platform-news p, .sample-library > p { margin-top: 10px; }
+.download-intro { background: #edf5fd; padding: 32px; margin-block: 24px; }
+.download-intro h1 { font-size: clamp(26px,4vw,40px); }
+.download-intro p { margin: 8px 0; }
+@media (max-width: 800px) {
+  .note-lead, .task-cards { grid-template-columns: 1fr; }
+  .note-lead .hero-actions { justify-content: flex-start; }
+  .editor-example img { height: clamp(155px,45vw,300px); object-fit: cover; object-position: 45% 30%; }
+  .sample-library details { padding: 14px; }
+}
+
+.sample-panorama {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 16px;
+  border-radius: 5px;
+}
+@media (max-width: 800px) {
+  .sample-panorama { display: none; }
+}
+
+.editions { scroll-margin-top: 100px; padding-block: 12px 28px; }
+.editions table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 16px 0; }
+.editions th, .editions td { padding: 12px; border: 1px solid #d6e2ed; text-align: left; overflow-wrap: anywhere; }
+.editions thead { background: #edf5fd; }
+.editions p { margin-block: 8px; }
+.editions .store-button { margin: 0; width: auto; max-width: none; font-size: 14px; }
+.edition-android { padding: 16px; margin-bottom: 32px; background: #f4f7fa; }
+.edition-android a { color: #14558e; text-decoration: underline; }
+@media (max-width: 600px) {
+  .editions th, .editions td { padding: 8px; font-size: 14px; }
+  .edition-android a { display: block; }
+}

@@ -34,6 +34,7 @@ with sync_playwright() as p:
         page.set_viewport_size({'width':1440,'height':1000})
 
     page.goto(BASE,wait_until='networkidle')
+    page.get_by_text('예제 화면과 미디어 체험하기',exact=True).click()
     page.get_by_role('tab',name='학습 기록').click()
     assert page.locator('[data-demo-title]').inner_text()=='오늘 배운 작은 발견'
     assert page.get_by_role('tabpanel',name='학습 기록').is_visible()
@@ -68,13 +69,14 @@ with sync_playwright() as p:
     saved.unlink()
 
     page.goto(BASE+'support.html',wait_until='networkidle')
+    faq_count = page.locator('.faq-item').count()
+    assert page.locator('.faq-item:visible').count() == faq_count
     page.locator('#faq-search').fill('비밀번호')
-    assert page.locator('.faq-item:visible').count()>0
-    assert page.locator('.faq-item:visible').count()<12
+    assert 0 < page.locator('.faq-item:visible').count() < faq_count
     page.locator('#faq-search').fill('no-results-12345')
     assert page.locator('.faq-empty').is_visible()
     page.locator('[data-clear-search]').click()
-    assert page.locator('.faq-item:visible').count()==12
+    assert page.locator('.faq-item:visible').count() == faq_count
     first=page.locator('.faq-item').first
     first.locator('summary').press('Enter')
     assert first.get_attribute('open') is not None
@@ -103,6 +105,7 @@ with sync_playwright() as p:
     assert page.locator('.guide-sidebar a[href="#save"]').get_attribute('aria-current')=='location'
     page.goto(BASE+'download.html',wait_until='networkidle')
     if settings['releaseStatus']=='released':
+        assert page.locator('#editions [data-pro-store-link]').get_attribute('href')==settings['windows']['pro']['storeUrl']
         store=page.locator('a.store-button')
         assert store.get_attribute('href')==settings['storeUrl']
         assert store.get_attribute('target')=='_blank'
@@ -120,6 +123,12 @@ with sync_playwright() as p:
         store_page.wait_for_load_state('load')
         assert store_page.url==settings['storeUrl']
         store_page.close()
+        with page.expect_popup() as pro_popup:
+            page.locator('.hero-actions [data-pro-store-link]').click()
+        pro_page=pro_popup.value
+        pro_page.wait_for_load_state('load')
+        assert pro_page.url==settings['windows']['pro']['storeUrl']
+        pro_page.close()
         page.goto(BASE+'releases.html',wait_until='networkidle')
         assert settings['releaseVersion'] in page.locator('h2').first.inner_text()
         assert page.locator('time').get_attribute('datetime')==settings['releaseDate']
