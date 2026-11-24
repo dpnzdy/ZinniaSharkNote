@@ -173,6 +173,6 @@ Free 공식 주소는 https://apps.microsoft.com/detail/9NKD9SB9HXMM, Pro는 htt
 
 소개·다운로드에는 현재 Windows Free·Pro의 앱 JSON-LD를 생성합니다. 상품 가격·Store 주소와 설명은 공통 제품 정보에서 가져오고, 과거 릴리스 버전·날짜나 Android 출시를 현재 상품 정보로 추정하지 않습니다. 평점·후기는 임의로 생성하지 않습니다.
 
-검색엔진 인증은 `src/config.mjs`의 `seo.verification`에 각 도구가 발급한 `content` 값만 설정합니다. 또는 `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`, `NAVER_SITE_VERIFICATION` 빌드 환경 변수를 사용할 수 있습니다. 빈 값이면 태그가 나오지 않습니다. 현재 발급값은 입력하지 않았으며 계정의 소유권 확인과 사이트맵 제출은 별도 후속 작업입니다. 자세한 설정·유지 방법은 [SEO-GUIDE.md](SEO-GUIDE.md)의 구현 현황을 참고하세요.
+검색엔진 인증은 `src/config.mjs`의 `seo.verification`에 각 도구가 발급한 `content` 값만 설정합니다. 또는 `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`, `NAVER_SITE_VERIFICATION` 빌드 환경 변수를 사용할 수 있습니다. 빈 값이면 태그가 나오지 않습니다. Google의 실제 발급값은 설정에 반영했으며 Bing·네이버 값은 아직 비어 있습니다. 계정의 소유권 확인과 사이트맵 제출 완료 여부는 SEO-GUIDE.md의 진행 상태에서 별도로 관리합니다. 자세한 설정·유지 방법은 [SEO-GUIDE.md](SEO-GUIDE.md)의 구현 현황을 참고하세요.
 
 `npm run check`·`npm run check:release`에 SEO 정적 검사가 포함됩니다. `python scripts/qa-seo.py`는 실제 제공 파일·사이트맵 XML·12개 앱 페이지의 모바일 표시와 언어 링크를 확인합니다. 공개 배포 후에는 `SITE_BASE_URL`을 공개 기본 주소로 지정해 같은 검사를 실행합니다.

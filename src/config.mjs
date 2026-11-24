@@ -23,7 +23,7 @@ export const config = {
   seo: {
     // Paste only the real tag's content value; blank values emit no verification tag.
     // Build-time GOOGLE_SITE_VERIFICATION / BING_SITE_VERIFICATION / NAVER_SITE_VERIFICATION override these.
-    verification: { google: '', bing: '', naver: '' },
+    verification: { google: 'GZtOlof2psXb4fhzjeMBUwSEOzaNF2egR0nn7RhqxXA', bing: '', naver: '' },
   },
   policies: {
     'app-privacy': { status: 'final', version: '1.0', effectiveDate: '2026-11-01', file: 'APP-PRIVACY-1.0.md' },
