@@ -182,9 +182,11 @@ with sync_playwright() as p:
     def project_route(route):
         suffix = route.request.url.split('/ZinniaSharkNote/',1)[1]
         route.fulfill(response=route.fetch(url=BASE+suffix))
-    ctx.route(BASE+'ZinniaSharkNote/**', project_route)
+    project_base = BASE if urlparse(BASE).path.strip('/') else BASE+'ZinniaSharkNote/'
+    if project_base != BASE:
+        ctx.route(BASE+'ZinniaSharkNote/**', project_route)
     tab = ctx.new_page()
-    tab.goto(BASE+'ZinniaSharkNote/', wait_until='networkidle')
+    tab.goto(project_base, wait_until='networkidle')
     tab.wait_for_url('**/ZinniaSharkNote/ja/index.html')
     assert tab.locator('.brand img').first.evaluate('(i)=>i.complete&&i.naturalWidth>0')
     tab.locator('#site-language').select_option('fr')
