@@ -27,10 +27,29 @@
 ### 검색엔진 등록 진행 상태
 
 - 확인일: 2026-11-24. 아래는 도구 화면에서 직접 확인한 상태이며, 실제 검색 결과 노출·전체 색인 완료와 구분합니다.
-- Google: HTML 인증 파일로 소유권 확인을 완료했습니다. `https://dpnzdy.github.io/ZinniaSharkNote/sitemap.xml` 제출이 접수됐고 수집 오류 후 한 번 재제출했습니다. 마지막 확인 시 사이트맵은 “가져올 수 없음”, 발견된 페이지 0으로 표시됐습니다. 별도 실시간 URL 검사에서 `/ZinniaSharkNote/ko/index.html`은 “URL을 Google에 등록할 수 있음”을 확인했고, 해당 홈페이지의 색인 생성 요청도 우선순위 크롤링 대기열에 접수됐습니다. 사이트맵 HTTP 200·application/xml·56개 URL과 별개로 Google의 후속 수집 상태를 확인해야 합니다. 오류를 해결하거나 색인 완료된 것으로 기록하지 않습니다.
+- Google: HTML 인증 파일로 소유권 확인을 완료했습니다. `https://dpnzdy.github.io/ZinniaSharkNote/sitemap.xml` 제출이 접수됐으나 사이트맵 보고서에는 “가져올 수 없음”, 발견된 페이지 0이 남아 있습니다. 2026-11-24 오후 10:09(KST)에 **사이트맵 XML 자체**를 실제 URL 테스트하여 “크롤링 허용 여부: 예”, “페이지 가져오기: 성공”을 확인했습니다. Google이 받은 원문도 올바른 XML입니다. 그 뒤 같은 주소의 재제출 접수를 확인했습니다. 상세 보고서는 구체적인 HTTP 코드·XML 오류를 제공하지 않았고, 직접 조치는 “감지된 문제 없음”입니다. 한국어 홈페이지의 별도 색인 생성 요청도 접수된 상태입니다. 아래 진단 기록과 같이 사이트 측 결함은 확인되지 않았으며, 사이트맵 처리 성공·실제 색인 완료는 아직 확인되지 않았습니다.
 - Bing: 실제 발급된 `msvalidate.01` 값으로 소유권 확인을 완료하고 같은 사이트맵 URL을 제출했습니다. 마지막 확인 상태는 `Processing`, 사이트맵 오류 0·경고 0입니다. URL 발견 수와 실제 색인 완료는 후속 처리에서 확인합니다.
 - 네이버: 프로젝트 하위 경로 등록이 불가능해 호스트 `https://dpnzdy.github.io` 기준으로 소유권 확인을 완료했습니다. 사용자 승인으로 별도 공개 저장소 `https://github.com/dpnzdy/dpnzdy.github.io`를 만들고 `main` 브랜치 루트에서 GitHub Pages를 게시했습니다. 루트 홈페이지와 공식 Naver HTML 인증 파일의 HTTP 200을 확인했고, 사용자 직접 보안문자 확인 후 `https://dpnzdy.github.io/ZinniaSharkNote/sitemap.xml`을 제출했습니다. 제출 목록의 `ZinniaSharkNote/sitemap.xml`과 등록일을 확인했습니다. 제출 목록 등록을 전체 URL 수집·색인 완료로 취급하지 않습니다.
 - 계정의 로그인 정보·비밀번호·세션은 저장소에 기록하지 않습니다. 사이트 소유권 확인용 메타태그 값은 공개 HTML에 포함됩니다.
+
+### Google 사이트맵 수집 오류 진단 (2026-11-24)
+
+| 확인 항목 | 확인 결과 |
+|---|---|
+| 제출 주소 | `https://dpnzdy.github.io/ZinniaSharkNote/sitemap.xml`. HTTPS·대소문자·프로젝트 경로가 공개 파일과 일치 |
+| 공개 응답 | 일반 브라우저·Googlebot 사용자 에이전트 요청 모두 HTTP 200, `application/xml`, 리디렉션 없음. 배포 원문과 로컬 생성 파일 일치 |
+| XML | UTF-8 선언·공식 sitemap 네임스페이스·XML 파싱 정상. 대표 URL 56개, 중복·루트 별칭·`noindex` 페이지 제외 |
+| 포함된 페이지 | 56개 모두 HTTP 200, 리디렉션 없음, 자기 주소 canonical 일치, `noindex` 없음 |
+| 호스트 robots.txt | `https://dpnzdy.github.io/robots.txt`는 HTTP 404. Google 공식 규격상 404는 수집 제한 없음으로 처리되므로 이 사실을 차단 원인으로 단정하지 않음 |
+| Google 실제 URL 테스트 | 사이트맵 XML 자체의 페이지 가져오기 **성공**. Google이 받은 소스에서 XML 원문 확인 |
+| Google 직접 조치 | 감지된 문제 없음 |
+| 사이트맵 보고서 | 재제출 접수 후에도 “가져올 수 없음”, 발견된 페이지 0. 상세 원인·오류 코드는 표시되지 않음 |
+
+현재 관찰 결과는 Google의 실제 URL 테스트와 사이트맵 수집 보고서가 서로 다른 상태임을 보여 줍니다. 일시적인 수집 실패·별도 수집 처리의 지연 가능성이 있으나, GitHub Pages의 과거 요청 로그나 Google 내부 처리 내역이 없으므로 근본 원인을 확정하지 않습니다. 유효한 XML을 임의로 바꾸거나 `robots.txt` 404를 수집 차단으로 취급하지 않습니다.
+
+후속 확인은 Search Console의 **Sitemaps → `/sitemap.xml` → 상태·발견된 페이지**에서 합니다. 상태가 **성공**으로 바뀌고 URL이 발견됐는지 확인해야 사이트맵 처리가 정상화됐다고 기록할 수 있습니다. 실제 URL 테스트 성공·제출 완료 알림만으로 처리 성공을 선언하지 않습니다. Google은 실패한 사이트맵을 며칠 동안 재시도할 수 있으므로 같은 파일을 반복 제출하거나 이름을 여러 번 바꾸지 않습니다. 오류가 지속되면 오류 상세와 XML 자체의 실제 URL 테스트를 다시 비교하고, 새로 확인된 차단·HTTP·XML 문제만 수정합니다.
+
+공식 근거: [Google Sitemaps 보고서와 수집 오류 진단](https://support.google.com/webmasters/answer/7451001), [robots.txt HTTP 상태 코드 처리](https://developers.google.com/crawling/docs/robots-txt/robots-txt-spec#handling-of-errors-and-http-status-codes).
 
 ### 네이버용 호스트 루트 저장소 유지
 
