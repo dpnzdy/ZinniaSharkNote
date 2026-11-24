@@ -2,7 +2,7 @@
 (() => {
   const locales = ['ko', 'en', 'de', 'es', 'fr', 'ja'];
   const names = {ko:'한국어', en:'English', de:'Deutsch', es:'Español', fr:'Français', ja:'日本語'};
-  const translatedPages = ['index', 'download', 'support', 'guide', 'installation', 'troubleshooting'];
+  const translatedPages = ['index', 'download', 'support', 'guide', 'installation', 'troubleshooting', 'releases', 'development'];
   const root = new URL('../', document.currentScript.src);
   const storageKey = `zinniashark-note:${root.pathname}:language`;
   const picker = document.querySelector('#site-language');

@@ -172,6 +172,8 @@ html:not([lang=ko]) .requirements dt,html:not([lang=ko]) .requirements dd{min-wi
 .edition-comparison .policy-table th:first-child{width:40%}
 .edition-comparison th,.edition-comparison td{overflow-wrap:anywhere}
 .policy-version-note{padding:20px;background:#edf2ff;border:1px solid #c8d5ef;border-radius:12px;margin:20px 0}
+.help-content a.button{color:#fff;text-decoration:none}
+.help-content a.button.button-outline{color:var(--blue)}
 @media(max-width:620px){
   .hero-actions>.edition-actions{justify-content:center}
   .edition-actions .button{font-size:12px;padding:12px 15px}
