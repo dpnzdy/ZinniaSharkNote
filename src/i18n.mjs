@@ -3,7 +3,7 @@ import { config } from './config.mjs';
 import { release } from './release.mjs';
 
 export const locales = ['ko', 'en', 'de', 'es', 'fr', 'ja'];
-export const localizedPageIds = ['index', 'download', 'support'];
+export const localizedPageIds = ['index', 'download', 'support', 'guide', 'installation', 'troubleshooting'];
 const nativeNames = ['한국어', 'English', 'Deutsch', 'Español', 'Français', '日本語'];
 const ogLocales = ['ko_KR', 'en_US', 'de_DE', 'es_ES', 'fr_FR', 'ja_JP'];
 const catalogs = Object.fromEntries(locales.slice(1).map(locale => [locale,
@@ -105,7 +105,7 @@ export function localizedHtml(page, source, locale) {
   if (locale !== 'ko') {
     html = html.replace(/<a\b([^>]*href="\.\.\/[^"#?]+\.html(?:[?#][^"]*)?"[^>]*)>([\s\S]*?)<\/a>/g,
       (_, attrs, label) => `<a${attrs} hreflang="ko">${label}<span class="translation-marker"> (${escape(translate('한국어 페이지', locale))})</span></a>`);
-    const notice = `<p class="container translation-notice">${escape(translate('가이드·개발 소식·정책과 원본 샘플은 현재 한국어로 제공됩니다. 앱 화면은 한국어 원본입니다.', locale))}</p>`;
+    const notice = `<p class="container translation-notice">${escape(translate('개발 소식·버전 소식·정책과 원본 샘플은 현재 한국어로 제공됩니다. 앱 화면은 한국어 원본입니다.', locale))}</p>`;
     html = html.replace('<main id="main"', `${notice}<main id="main"`);
   }
   html = html.replace('</nav></div></header>', `</nav>${languagePicker(page.id, locale, true)}</div></header>`);

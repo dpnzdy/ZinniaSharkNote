@@ -28,7 +28,7 @@ for (const page of pages.filter(page => localizedPageIds.includes(page.id))) for
   assert.ok(html.includes(`<html lang="${locale}">`));
   assert.ok(html.includes(`<link rel="canonical" href="${config.publicSiteUrl}${locale}/${page.id}.html">`));
   assert.equal((html.match(/<h1[\s>]/g) || []).length, 1);
-  assert.equal((html.match(/aria-current="page"/g) || []).length, 1);
+  assert.equal((html.match(/aria-current="page"/g) || []).length, ['index','download','support','guide'].includes(page.id)?1:0);
   for (const alternate of locales) assert.ok(html.includes(`hreflang="${alternate}" href="${config.publicSiteUrl}${alternate}/${page.id}.html"`));
   assert.equal((html.match(/<option /g) || []).length, 7);
   assert.ok(html.includes(`value="${locale}" lang="${locale}" selected`));
@@ -39,7 +39,7 @@ for (const page of pages.filter(page => localizedPageIds.includes(page.id))) for
     assert.ok(!html.includes('data-search='), 'FAQ search uses translated visible text');
   }
   assert.ok(!/\{(?:version|releaseDate|firstReleaseDate|email|year|trialDays|proPrice|blockLimit|mediaLimit)\}/.test(html), 'No unresolved release placeholders');
-  if (release.released) for (const url of [release.storeUrl, release.proStoreUrl]) assert.ok(html.includes(`href="${url}" target="_blank" rel="noopener" data-store-link`),`${locale}/${page.id}: separate edition Store URL`);
+  if (release.released && ['index','download','support','installation'].includes(page.id)) for (const url of [release.storeUrl, release.proStoreUrl]) assert.ok(html.includes(`href="${url}" target="_blank" rel="noopener" data-store-link`),`${locale}/${page.id}: separate edition Store URL`);
   if(page.id==='download') for(const value of [release.proPrice,String(release.editions.trialDays),String(release.editions.blockLimit),String(release.editions.mediaLimit),'id="editions"']) assert.ok(html.includes(value), `${locale}: missing edition fact ${value}`);
   const markup = html.replace(/<script[\s\S]*?<\/script>/g, '');
   for (const [, reference] of markup.matchAll(/(?:href|src|data-lazy-video)="([^"]+)"/g)) {

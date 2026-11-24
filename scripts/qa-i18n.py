@@ -1,13 +1,14 @@
 """Browser checks for language routing, static content and shared interactions. Run npm run dev first."""
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
-import json
+import json, os, subprocess
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
 QA = ROOT / '.qa'
 QA.mkdir(exist_ok=True)
-BASE = 'http://127.0.0.1:4173/'
+BASE = os.environ.get('SITE_BASE_URL', 'http://127.0.0.1:4173/').rstrip('/') + '/'
+PAGES = json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {localizedPageIds} from './src/i18n.mjs';console.log(JSON.stringify(localizedPageIds))"],cwd=ROOT,encoding='utf-8'))
 LOCALES = ['ko', 'en', 'de', 'es', 'fr', 'ja']
 errors, reports = [], []
 
@@ -17,7 +18,7 @@ with sync_playwright() as p:
     page = context.new_page()
     page.on('pageerror', lambda error: errors.append(str(error)))
     for locale in LOCALES:
-        for name in ['index', 'download', 'support']:
+        for name in PAGES:
             response = page.goto(f'{BASE}{locale}/{name}.html', wait_until='networkidle')
             assert response.status == 200
             assert page.locator('html').get_attribute('lang') == locale
@@ -26,7 +27,7 @@ with sync_playwright() as p:
             assert page.locator('#site-language').input_value() in [locale, 'system']
             page.locator('img').evaluate_all('(images)=>images.forEach(i=>i.loading="eager")')
             page.wait_for_function('Array.from(document.images).every(i=>i.complete&&i.naturalWidth>0)')
-            assert page.locator('#main-nav a[aria-current=page]').count() == 1
+            assert page.locator('#main-nav a[aria-current=page]').count() == (1 if name in ['index','download','support','guide'] else 0)
             for width in [1440, 1024, 768, 390, 320]:
                 page.set_viewport_size({'width':width, 'height':1000 if width > 620 else 844})
                 assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'), f'{locale}/{name}: overflow at {width}'
@@ -86,6 +87,32 @@ with sync_playwright() as p:
                 assert page.evaluate('window.getSelection().toString()').strip() == 'dpnzdy@zinniashark.com'
                 href = page.locator('.contact-topics a').last.get_attribute('href')
                 if locale != 'ko': assert '앱 버전' not in parse_qs(urlparse(href).query)['body'][0]
+            if name in ['guide','installation','troubleshooting']:
+                # Internal documentation links stay in the same language directory.
+                assert page.locator('a[href^="../guide.html"],a[href^="../installation.html"],a[href^="../troubleshooting.html"]').count() == 0
+                for link in page.locator('main a[href]').all():
+                    href=link.get_attribute('href')
+                    if href.startswith('#'):
+                        assert page.locator('[id="'+href[1:]+'"]').count() == 1
+                if name=='guide':
+                    for anchor in ['start','editing','media','save','password','settings']:
+                        page.locator('.guide-sidebar a[href="#'+anchor+'"]').click()
+                        page.wait_for_function('(id)=>location.hash=="#"+id',arg=anchor)
+                        assert page.locator('#'+anchor).is_visible()
+                    assert 'ADQ2' in page.locator('#password').inner_text()
+                    assert '.adq' in page.locator('#save').inner_text()
+                elif name=='installation':
+                    assert page.locator('a[href="https://developer.microsoft.com/en-us/microsoft-edge/webview2/"]').count() == 1
+                    assert page.locator('[data-edition=free]').count()==1 and page.locator('[data-edition=pro]').count()==1
+                    assert 'NTFS' in page.locator('#storage').inner_text()
+                else:
+                    for anchor in ['launch','save','open','media','password','resume']:
+                        page.locator('.help-jump a[href="#'+anchor+'"]').click()
+                        page.wait_for_function('(id)=>location.hash=="#"+id',arg=anchor)
+                        assert page.locator('#'+anchor).is_visible()
+                    assert page.locator('a[href="installation.html#webview2"]').count()==1
+                page.set_viewport_size({'width':390,'height':844})
+                page.screenshot(path=str(QA / f'help-{locale}-{name}-mobile.png'),full_page=True)
             page.locator('.menu-toggle').click()
             assert page.locator('#main-nav').is_visible()
             page.keyboard.press('Escape')
@@ -123,6 +150,21 @@ with sync_playwright() as p:
     page.locator('#site-language').select_option('es')
     page.wait_for_url('**/es/index.html')
 
+    for document, anchor in [('guide','save'),('installation','webview2'),('troubleshooting','resume')]:
+        page.goto(BASE+'en/'+document+'.html?help=1#'+anchor,wait_until='networkidle')
+        page.locator('#site-language').select_option('de')
+        page.wait_for_url('**/de/'+document+'.html?help=1#'+anchor)
+        page.reload(wait_until='networkidle')
+        assert page.locator('html').get_attribute('lang')=='de'
+    page.goto(BASE+'en/index.html',wait_until='networkidle')
+    page.locator('#main-nav a[href="guide.html"]').click()
+    page.wait_for_url('**/en/guide.html')
+    page.locator('.help-card[href="installation.html"]').click()
+    page.wait_for_url('**/en/installation.html')
+    page.goto(BASE+'en/support.html',wait_until='networkidle')
+    page.locator('.help-card[href="troubleshooting.html"]').click()
+    page.wait_for_url('**/en/troubleshooting.html')
+
     # Disabled storage must not break navigation or introduce redirect loops.
     ctx = browser.new_context(locale='fr-FR')
     ctx.add_init_script("Object.defineProperty(window,'localStorage',{get:()=>{throw new Error('blocked')}})")
@@ -151,18 +193,22 @@ with sync_playwright() as p:
     tab.wait_for_url('**/ZinniaSharkNote/fr/support.html')
     ctx.close()
 
-    # Each locale is readable and linked even when JavaScript is disabled.
+    # Read static support and documentation, with language links and section navigation, without JS.
     ctx = browser.new_context(java_script_enabled=False)
     for locale in LOCALES:
-        tab = ctx.new_page()
-        tab.goto(f'{BASE}{locale}/support.html', wait_until='networkidle')
-        assert tab.locator('.faq-item').count() == 14
-        assert tab.locator('.language-links a').count() == 6
-        assert tab.locator('html').get_attribute('lang') == locale
-        tab.close()
+        for document in ['support','guide','installation','troubleshooting']:
+            tab = ctx.new_page()
+            tab.goto(f'{BASE}{locale}/{document}.html', wait_until='networkidle')
+            assert tab.locator('.language-links a').count() == 6
+            assert tab.locator('html').get_attribute('lang') == locale
+            if document=='support': assert tab.locator('.faq-item').count() == 14
+            if document=='guide': assert tab.locator('.guide-sidebar nav a').count() == 6
+            if document=='installation': assert 'NTFS' in tab.locator('#storage').inner_text()
+            if document=='troubleshooting': assert tab.locator('.help-jump a').count() == 6
+            tab.close()
     ctx.close()
     assert not errors, errors
     browser.close()
 
-(QA/'i18n-report.json').write_text(json.dumps({'pages':reports, 'viewportWidths':[1440,1024,768,390,320], 'tests':['regional and ordered language detection','unsupported-language English fallback','manual selection and persistence','explicit URLs override saved preference','query and hash preservation','languagechange event','policy URLs unchanged','blocked localStorage','GitHub project subpath','no-JavaScript static content','Free/Pro official links and comparison in all locales','current manual saving FAQ','localized FAQ search and reset','localized clipboard success/fallback','localized demo tabs and media','mobile menu and Escape'], 'errors':errors}, ensure_ascii=False, indent=2), encoding='utf-8')
-print('PASS: 18 locale pages, responsive layouts, automatic/manual routing, storage failures, project subpath and static fallback.')
+(QA/('i18n-public-report.json' if BASE.startswith('https://') else 'i18n-report.json')).write_text(json.dumps({'base':BASE,'pages':reports, 'viewportWidths':[1440,1024,768,390,320], 'tests':['regional and ordered language detection','unsupported-language English fallback','manual selection and persistence','explicit URLs override saved preference','query and hash preservation','languagechange event','policy URLs unchanged','blocked localStorage','GitHub project subpath','no-JavaScript static content','Free/Pro official links and comparison in all locales','current manual saving FAQ','translated guide contents and anchors','translated install/troubleshooting links','help-page language switching with query and hash','localized FAQ search and reset','localized clipboard success/fallback','localized demo tabs and media','mobile menu and Escape'], 'errors':errors}, ensure_ascii=False, indent=2), encoding='utf-8')
+print(f'PASS: {len(PAGES)*len(LOCALES)} locale pages, responsive layouts, guide/troubleshooting anchors, automatic/manual routing, storage failures, project subpath and static fallback.')

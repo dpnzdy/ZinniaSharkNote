@@ -2,7 +2,7 @@
 (() => {
   const locales = ['ko', 'en', 'de', 'es', 'fr', 'ja'];
   const names = {ko:'한국어', en:'English', de:'Deutsch', es:'Español', fr:'Français', ja:'日本語'};
-  const translatedPages = ['index', 'download', 'support'];
+  const translatedPages = ['index', 'download', 'support', 'guide', 'installation', 'troubleshooting'];
   const root = new URL('../', document.currentScript.src);
   const storageKey = `zinniashark-note:${root.pathname}:language`;
   const picker = document.querySelector('#site-language');
@@ -33,7 +33,7 @@
     if (translatedPages.includes(page)) target.hash = location.hash;
     if (target.href !== location.href) location[replace ? 'replace' : 'assign'](target.href);
   };
-  // Do not redirect policy/help URLs or explicit locale URLs, even with a saved preference.
+  // Do not redirect untranslated policy/news URLs or explicit locale URLs, even with a saved preference.
   if (!explicit && translatedPages.includes(page)) {
     if (stored === null) write('system');
     go(resolved, true);
