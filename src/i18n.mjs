@@ -2,10 +2,9 @@ import { readFileSync } from 'node:fs';
 import { config } from './config.mjs';
 import { release } from './release.mjs';
 
-export const locales = ['ko', 'en', 'de', 'es', 'fr', 'ja'];
-export const localizedPageIds = ['index', 'download', 'support', 'guide', 'installation', 'troubleshooting', 'releases', 'development'];
-export const bilingualPageIds = ['policies', 'app-privacy', 'android-app-privacy', 'eula', 'license', 'lifecycle', 'support-consent', 'privacy'];
-export const pageLocales = id => bilingualPageIds.includes(id) ? ['ko', 'en'] : localizedPageIds.includes(id) ? locales : [];
+import { locales, localizedPageIds, bilingualPageIds, pageLocales } from './page-locales.mjs';
+export { locales, localizedPageIds, bilingualPageIds, pageLocales };
+import { canonicalUrl, appStructuredData } from './seo.mjs';
 const nativeNames = ['한국어', 'English', 'Deutsch', 'Español', 'Français', '日本語'];
 const ogLocales = ['ko_KR', 'en_US', 'de_DE', 'es_ES', 'fr_FR', 'ja_JP'];
 const catalogs = Object.fromEntries(locales.slice(1).map(locale => [locale,
@@ -58,10 +57,15 @@ export function documentLanguages(pageId, locale='ko', nested=false) {
   return `<!--document-languages--><aside class="container document-languages" aria-label="${en?'Document language':'문서 언어'}"><nav aria-label="${en?'Korean and English documents':'한국어·영어 문서'}">${['ko','en'].map(code=>`<a href="${prefix}${code}/${pageId}.html" lang="${code}" hreflang="${code}" data-document-language="${code}"${code===locale?' aria-current="true"':''}>${code==='ko'?'한국어':'English'}</a>`).join('')}</nav><p>${en?'This is an English reference translation of the Korean original. Translation does not change the original effective dates, scope or draft status. These documents are available in Korean and English; other site languages use English. Your site language preference is retained.':'영문은 한국어 원문의 참고 번역본입니다. 번역으로 원문의 시행일·적용 범위·초안 상태를 변경하지 않습니다. 이 문서는 한국어·영어로 제공하며, 다른 사이트 언어에서는 영어로 연결합니다. 사이트 언어 설정은 유지됩니다.'}</p></aside><!--/document-languages-->`;
 }
 
+export function visibleLanguageLinks(pageId, locale='ko', nested=false) {
+  if (!localizedPageIds.includes(pageId)) return '';
+  return `<!--site-language-links--><nav class="container site-language-links" aria-label="${escape(translate('언어',locale))}">${pageLocales(pageId).map(code=>`<a href="${nested?'../':''}${code}/${pageId}.html" lang="${code}" hreflang="${code}" data-site-language="${code}"${code===locale?' aria-current="true"':''}>${nativeNames[locales.indexOf(code)]}</a>`).join('')}</nav><!--/site-language-links-->`;
+}
+
 export function languageAlternates(pageId) {
   if (!pageLocales(pageId).length || !config.publicSiteUrl) return '';
-  return pageLocales(pageId).map(locale => `<link rel="alternate" hreflang="${locale}" href="${escape(new URL(`${locale}/${pageId}.html`, config.publicSiteUrl).href)}">`).join('') +
-    `<link rel="alternate" hreflang="x-default" href="${escape(new URL(`${pageId}.html`, config.publicSiteUrl).href)}">`;
+  return pageLocales(pageId).map(locale => `<link rel="alternate" hreflang="${locale}" href="${escape(canonicalUrl(pageId,locale))}">`).join('') +
+    `<link rel="alternate" hreflang="x-default" href="${escape(canonicalUrl(pageId,'en'))}">`;
 }
 
 // Tokenize only our trusted generated markup. Translate text and human-facing attributes,
@@ -89,6 +93,8 @@ export function localizedHtml(page, source, locale) {
   if (!pageLocales(page.id).includes(locale)) throw new Error('Unsupported localized page');
   // Inject a fresh picker after translating to preserve the native language names.
   source = source.replace(/<div class="language-control">[\s\S]*?<\/noscript><\/div>/, '');
+  source = source.replace(/<script type="application\/ld\+json" id="app-structured-data">[\s\S]*?<\/script>/, '');
+  source = source.replace(/<!--site-language-links-->[\s\S]*?<!--\/site-language-links-->/, '');
   source = source.replace(/<!--document-languages-->[\s\S]*?<!--\/document-languages-->/, '');
   // Search visible, translated FAQ text rather than stale Korean search metadata.
   source = source.replace(/ data-search="[^"]*"/g, '');
@@ -105,7 +111,7 @@ export function localizedHtml(page, source, locale) {
   html = html.replace('<html lang="ko">', `<html lang="${locale}">`)
     .replace('property="og:locale" content="ko_KR"', `property="og:locale" content="${ogLocales[locales.indexOf(locale)]}"`)
     .replace(/(<link rel="canonical" href="|<meta property="og:url" content=")[^"]+"/g,
-      (_, prefix) => `${prefix}${escape(new URL(`${locale}/${page.id}.html`, config.publicSiteUrl).href)}"`);
+      (_, prefix) => `${prefix}${escape(canonicalUrl(page.id,locale))}"`);
   // Resolve local links for GitHub project Pages and file previews, without a domain-root /assets assumption.
   html = html.replace(/\b(href|src|data-lazy-video)="([^"]*)"/g, (_, attr, value) => {
     if (!value || /^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(value)) return `${attr}="${value}"`;
@@ -123,6 +129,8 @@ export function localizedHtml(page, source, locale) {
   }
   html = html.replace('<main id="main" tabindex="-1">', `<main id="main" tabindex="-1">${documentLanguages(page.id,locale,true)}`);
   html = html.replace('</nav></div></header>', `</nav>${languagePicker(page.id, locale, true)}</div></header>`);
+  html = html.replace('</footer>', `${visibleLanguageLinks(page.id,locale,true)}</footer>`);
+  html = html.replace('</head>', `${appStructuredData(page,locale,value=>translate(value,locale))}</head>`);
   const messages = JSON.stringify(Object.fromEntries(runtimeKeys.map(key => [key, translate(key, locale)])))
     .replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
   html = html.replace('</head>', `<script type="application/json" id="site-messages">${messages}</script></head>`);

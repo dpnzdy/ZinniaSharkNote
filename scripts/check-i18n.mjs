@@ -34,7 +34,7 @@ for (const page of pages.filter(page => localizedPageIds.includes(page.id))) for
   assert.ok(html.includes(`value="${locale}" lang="${locale}" selected`));
   assert.ok(html.includes('id="site-messages"'));
   if (locale !== 'ko') {
-    const content = html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<select[\s\S]*?<\/select>/g, '').replace(/<noscript[\s\S]*?<\/noscript>/g, '');
+    const content = html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<select[\s\S]*?<\/select>/g, '').replace(/<noscript[\s\S]*?<\/noscript>/g, '').replace(/<!--site-language-links-->[\s\S]*?<!--\/site-language-links-->/g, '');
     assert.ok(!/[가-힣]/.test(content), `Korean leaked into ${locale}/${page.id}`);
     assert.ok(!html.includes('data-search='), 'FAQ search uses translated visible text');
   }

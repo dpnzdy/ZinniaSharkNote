@@ -573,5 +573,6 @@
   "MP4 비디오 32 MiB": "MP4 video: 32 MiB",
   "문서에서 참조하는 미디어 자산의 합계는 128 MiB, 신규 삽입 시 문서 컨테이너 예산은 256 MiB입니다. 기존 지원 문서에 들어 있는 자산은 열기·편집·저장 시 보존합니다.": "The combined media assets referenced by a document are limited to 128 MiB; the document container budget for new insertions is 256 MiB. Existing assets in supported documents are preserved when opening, editing and saving.",
   "Windows 수동 저장·구버전 작업 내보내기, Free·Pro 안내와 Android 개발 상태입니다.": "Windows manual saving and older-work export, Free/Pro guidance and Android development status.",
-  "개발 소식 목차": "Development news contents"
+  "개발 소식 목차": "Development news contents",
+  "Free 무료 · Pro 일회성 구매 {proPrice} ·": "Free: free · Pro: one-time purchase {proPrice} ·"
 }

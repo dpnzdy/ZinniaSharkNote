@@ -17,9 +17,9 @@ function home() {
       <div class="note-copy">
         <p class="note-name"><img src="assets/app-icon.webp" width="34" height="34" alt="">ZinniaShark Note</p>
         <h1>글과 자료를<br>한 문서에 담으세요.</h1>
-        <p>글을 쓰고 표와 사진, 오디오와 비디오를 함께 정리하세요. 완성한 기록은 내 PC에 .adq 파일로 저장됩니다.</p>
+        <p>${release.description}</p>
         <div class="hero-actions">${storeActions()}</div>
-        <p class="platform-line">Pro 일회성 구매 ${release.proPrice} · <a href="download.html#editions">Windows 에디션 비교 보기 →</a></p>
+        <p class="platform-line">Free 무료 · Pro 일회성 구매 ${release.proPrice} · <a href="download.html#editions">Windows 에디션 비교 보기 →</a></p>
         <p class="platform-line">현재 Windows 앱은 작업 이어하기와 주기적 복구 사본 기록을 제공하지 않습니다. 종료 전에 변경 내용을 파일에 저장하세요. <a href="guide.html#save">파일 저장 방법 보기</a></p>
         <p class="platform-line">${release.systemRequirements}<br><a href="development.html#android">Android용 Google Play 출시 예정 →</a></p>
       </div>

@@ -187,3 +187,8 @@ html:not([lang=ko]) .requirements dt,html:not([lang=ko]) .requirements dd{min-wi
 .document-languages p{max-width:78ch;line-height:1.8;margin-bottom:0}
 .document-languages+.page-intro{padding-top:32px}
 .policy-content{overflow-wrap:anywhere}
+
+.site-language-links{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 22px;padding-block:22px;font-size:12px;line-height:1.8;border-top:1px solid var(--line)}
+.site-language-links a{text-decoration:underline;text-underline-offset:4px}
+.site-language-links a[aria-current="true"]{font-weight:700;color:var(--blue)}
+.site-language-links a:focus-visible{outline:3px solid #7090ed;outline-offset:4px;border-radius:2px}

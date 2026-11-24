@@ -42,6 +42,19 @@
     return;
   }
   picker.value = bilingual ? preference : followsSystem ? 'system' : current;
+  // These are ordinary crawlable links; JS adds preference persistence and current section context.
+  const updateSiteLanguageLinks = () => document.querySelectorAll('[data-site-language]').forEach(link => {
+    const target = new URL(link.href); target.search = location.search; target.hash = location.hash; link.href = target.href;
+  });
+  updateSiteLanguageLinks();
+  window.addEventListener('hashchange', updateSiteLanguageLinks);
+  document.querySelectorAll('[data-site-language]').forEach(link => link.addEventListener('click', () => {
+    updateSiteLanguageLinks();
+    write(link.dataset.siteLanguage);
+    followsSystem = false;
+    picker.value = link.dataset.siteLanguage;
+  }));
+
   const updateDocumentLinks = () => document.querySelectorAll('[data-document-language]').forEach(link => {
     const target = new URL(link.href);
     target.search = location.search;

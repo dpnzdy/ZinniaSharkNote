@@ -35,7 +35,7 @@ for(const [id,html] of Object.entries(rendered)) {
   assert.ok(!html.includes('출시 준비 중'),`${id}: stale release status`);
   assert.ok(!html.includes('출시 안내 보기'),`${id}: stale action`);
   if(id==='releases') assert.ok(html.includes('1.0.1.0'),`${id}: historical package version`);
-  assert.ok(html.includes(`https://example.com/adequora-writer/${id}.html`),`${id}: subpath-aware canonical`);
+  assert.ok(html.includes(`https://example.com/adequora-writer/ko/${id}.html`),`${id}: subpath-aware canonical`);
 }
 const previewOutput=execFileSync(process.execPath,['--input-type=module','-e',`
   import {config} from './src/config.mjs';

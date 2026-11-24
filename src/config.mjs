@@ -20,6 +20,11 @@ export const config = {
   releaseVersion: '1.0.2.0',
   releaseDate: '2026-11-06',
   publicSiteUrl: 'https://dpnzdy.github.io/ZinniaSharkNote/',
+  seo: {
+    // Paste only the real tag's content value; blank values emit no verification tag.
+    // Build-time GOOGLE_SITE_VERIFICATION / BING_SITE_VERIFICATION / NAVER_SITE_VERIFICATION override these.
+    verification: { google: '', bing: '', naver: '' },
+  },
   policies: {
     'app-privacy': { status: 'final', version: '1.0', effectiveDate: '2026-11-01', file: 'APP-PRIVACY-1.0.md' },
     'android-app-privacy': { status: 'final', version: '1.1', effectiveDate: '2026-11-13', file: 'APP-PRIVACY-ANDROID-1.0.md' },

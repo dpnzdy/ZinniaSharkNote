@@ -5,6 +5,7 @@ import { pages } from '../src/pages.mjs';
 import { shell } from '../src/components.mjs';
 import { config } from '../src/config.mjs';
 import { pageLocales, localizedHtml } from '../src/i18n.mjs';
+import { sitemapXml } from '../src/seo.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 if(config.publicSiteUrl && (!/^https:\/\/[^\s"<>]+\/$/.test(config.publicSiteUrl))) throw new Error('Use the confirmed HTTPS site base URL with a trailing slash.');
 if(config.storeUrl && (!config.storeUrl.startsWith('https://') || /[\s"<>]/.test(config.storeUrl))) throw new Error('Use a valid official HTTPS Store URL.');
@@ -19,3 +20,6 @@ for(const page of pages){
     console.log(`Built ${locale}/${page.id}.html`);
   }
 }
+
+await writeFile(path.join(root,'sitemap.xml'),sitemapXml(pages),'utf8');
+console.log('Built sitemap.xml');

@@ -1,5 +1,7 @@
 # ZinniaShark Note website
 
+검색 노출에 영향을 주는 변경을 할 때는 [검색 노출 개선·운영 가이드](SEO-GUIDE.md)의 적용 순서와 변경 시 점검표를 참고하세요.
+
 다국어 정적 제품 사이트입니다. 소개·다운로드·지원·사용 가이드·설치 안내·문제 해결·버전 소식·개발 소식 페이지는 한국어·영어·독일어·스페인어·프랑스어·일본어로 제공하며 나머지 문서는 현재 한국어입니다. 앱은 Microsoft Store에 공개되어 있으며, 이 프로젝트는 공식 다운로드·설치·지원 안내를 제공합니다. 웹사이트 변경의 원격 반영은 GitHub Pages 배포 상태와 별개로 확인합니다.
 
 ## 페이지
@@ -163,3 +165,14 @@ Free 공식 주소는 https://apps.microsoft.com/detail/9NKD9SB9HXMM, Pro는 htt
 원문 동기화 뒤에는 **영문도 함께 검토**하고 `content/policies/en/review.json`의 해당 원문·번역 SHA-256(LF 정규화)을 갱신합니다. `npm run check`와 `npm run check:release`는 문서 쌍의 해시, 절·표·목록 구조, 외부 정책 링크, 버전과 초안 상태를 검사하므로 원문만 바뀐 채 배포되지 않습니다. 해시 갱신만으로 번역 검토를 대신하지 마세요.
 
 `python scripts/qa-documents.py`는 16개 한영 문서의 5개 화면 폭, 기존 루트 8개 주소, 6개 사이트 언어에서의 문서 연결과 설정 유지, JS 비활성 접근, 플랫폼·자료 종류·언어 변경 및 뒤로가기 시 동의 초기화를 검사합니다. 작성 메일의 두 동의 문구·보유 기간·언어·방침 버전/주소·한국 시간 확인일도 검증합니다. 메일을 발송하거나 자료를 업로드하지 않습니다. `SITE_BASE_URL`을 공개 사이트 주소로 지정하면 배포 후 같은 검사를 실행합니다.
+
+
+## 검색 노출 기본 기능 (2026-11-24)
+
+`npm run build`는 HTML 80개와 `sitemap.xml`을 생성합니다. 사이트맵은 색인이 허용된 언어별 대표 URL 56개를 포함하고, 기존 정책 초안·목록의 `noindex`와 루트 중복 별칭은 제외합니다. 루트 한국어 문서의 canonical·og:url은 `/ko/` 주소를 가리키며, 기존 루트 주소의 접근과 언어 선택 기능은 유지합니다. x-default는 영어 대표 문서를 사용합니다. 주요 페이지 푸터의 언어 링크는 JavaScript 없이도 동작하며, JavaScript 사용 시 선택한 언어·쿼리·앵커를 보존합니다.
+
+소개·다운로드에는 현재 Windows Free·Pro의 앱 JSON-LD를 생성합니다. 상품 가격·Store 주소와 설명은 공통 제품 정보에서 가져오고, 과거 릴리스 버전·날짜나 Android 출시를 현재 상품 정보로 추정하지 않습니다. 평점·후기는 임의로 생성하지 않습니다.
+
+검색엔진 인증은 `src/config.mjs`의 `seo.verification`에 각 도구가 발급한 `content` 값만 설정합니다. 또는 `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`, `NAVER_SITE_VERIFICATION` 빌드 환경 변수를 사용할 수 있습니다. 빈 값이면 태그가 나오지 않습니다. 현재 발급값은 입력하지 않았으며 계정의 소유권 확인과 사이트맵 제출은 별도 후속 작업입니다. 자세한 설정·유지 방법은 [SEO-GUIDE.md](SEO-GUIDE.md)의 구현 현황을 참고하세요.
+
+`npm run check`·`npm run check:release`에 SEO 정적 검사가 포함됩니다. `python scripts/qa-seo.py`는 실제 제공 파일·사이트맵 XML·12개 앱 페이지의 모바일 표시와 언어 링크를 확인합니다. 공개 배포 후에는 `SITE_BASE_URL`을 공개 기본 주소로 지정해 같은 검사를 실행합니다.

@@ -28,6 +28,7 @@ export function releaseInfo(settings = config) {
   const firstDateLabel=`${firstDate.slice(0,4)}년 ${Number(firstDate.slice(5,7))}월 ${Number(firstDate.slice(8,10))}일`;
   const dateLabel = validDate ? `${date.slice(0,4)}년 ${Number(date.slice(5,7))}월 ${Number(date.slice(8,10))}일` : null;
   return {
+    description: '글을 쓰고 표와 사진, 오디오와 비디오를 함께 정리하세요. 완성한 기록은 내 PC에 .adq 파일로 저장됩니다.',
     released,
     storeUrl: released ? storeUrl : null,
     proStoreUrl: released ? proStoreUrl : null,
