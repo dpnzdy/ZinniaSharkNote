@@ -1,3 +1,8 @@
+// Localized strings are embedded at build time; all page content is already static HTML.
+const siteMessages = JSON.parse(document.querySelector('#site-messages')?.textContent || '{}');
+const siteLocale = document.documentElement.lang || 'ko';
+const siteRoot = new URL('../', document.currentScript.src);
+const ui = (key, values = {}) => Object.entries(values).reduce((text, [name, value]) => text.replaceAll(`{${name}}`, value), siteMessages[key] || key);
 // Optional materials: collect two explicit choices locally, then let the visitor compose mail.
 const consentSection = document.querySelector('[data-support-consent]');
 if (consentSection) {
@@ -63,14 +68,14 @@ function closeMenu(returnFocus = false) {
   if (!menuButton || !navigation) return;
   navigation.classList.remove('is-open');
   menuButton.setAttribute('aria-expanded', 'false');
-  menuButton.setAttribute('aria-label', '메뉴 열기');
+  menuButton.setAttribute('aria-label', ui('메뉴 열기'));
   if (returnFocus) menuButton.focus();
 }
 menuButton?.addEventListener('click', () => {
   const open = menuButton.getAttribute('aria-expanded') !== 'true';
   navigation.classList.toggle('is-open', open);
   menuButton.setAttribute('aria-expanded', String(open));
-  menuButton.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+  menuButton.setAttribute('aria-label', ui(open ? '메뉴 닫기' : '메뉴 열기'));
 });
 navigation?.addEventListener('click', e => { if (e.target.closest('a')) closeMenu(); });
 document.addEventListener('keydown', e => {
@@ -79,7 +84,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('click', e => {
   if (!e.target.closest('.site-header')) closeMenu();
 });
-matchMedia('(min-width: 621px)').addEventListener('change', e => { if (e.matches) closeMenu(); });
+matchMedia('(min-width: 1101px)').addEventListener('change', e => { if (e.matches) closeMenu(); });
 
 function initTabs(selector, activate) {
   const buttons = [...document.querySelectorAll(selector)];
@@ -112,9 +117,9 @@ const demos = {
 initTabs('[data-demo]', button => {
   const demo = demos[button.dataset.demo];
   if (!demo) return;
-  for (const key of ['kicker','title','subtitle','quote']) document.querySelector(`[data-demo-${key}]`).textContent = demo[key];
+  for (const key of ['kicker','title','subtitle','quote']) document.querySelector(`[data-demo-${key}]`).textContent = ui(demo[key]);
   const image = document.querySelector('[data-demo-image]');
-  image.src = demo.image; image.alt = demo.alt;
+  image.src = new URL(demo.image, siteRoot).href; image.alt = ui(demo.alt);
   document.querySelector('#document-demo').setAttribute('aria-labelledby', button.id);
 });
 initTabs('[data-media-tab]', button => {
@@ -133,16 +138,16 @@ initTabs('[data-media-tab]', button => {
 const search = document.querySelector('#faq-search');
 const questions = [...document.querySelectorAll('.faq-item')];
 function searchFaq() {
-  const terms = search.value.trim().toLocaleLowerCase('ko-KR').split(/\s+/).filter(Boolean);
+  const terms = search.value.trim().toLocaleLowerCase(siteLocale).split(/\s+/).filter(Boolean);
   let visible = 0;
   questions.forEach(question => {
-    const content = question.dataset.search.toLocaleLowerCase('ko-KR');
+    const content = (question.dataset.search || question.textContent).toLocaleLowerCase(siteLocale);
     const matches = terms.every(term => content.includes(term));
     question.hidden = !matches;
     if (matches) visible++;
   });
   document.querySelector('.faq-empty').hidden = visible !== 0;
-  document.querySelector('.faq-search-status').textContent = terms.length ? `${visible}개의 질문을 찾았습니다.` : `전체 ${questions.length}개의 질문입니다.`;
+  document.querySelector('.faq-search-status').textContent = terms.length ? ui('{count}개의 질문을 찾았습니다.', {count:visible}) : ui('전체 {count}개의 질문입니다.', {count:questions.length});
 }
 search?.addEventListener('input', searchFaq);
 document.querySelector('[data-clear-search]')?.addEventListener('click', () => {
@@ -162,12 +167,12 @@ document.querySelector('[data-copy-email]')?.addEventListener('click', async e =
       navigator.clipboard.writeText(email),
       new Promise((_, reject) => setTimeout(() => reject(new Error('clipboard-timeout')), 1800)),
     ]);
-    toast('이메일 주소를 복사했습니다.');
+    toast(ui('이메일 주소를 복사했습니다.'));
   } catch {
     const text = document.querySelector('.contact-email');
     const range = document.createRange(); range.selectNodeContents(text);
     const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
-    toast('주소를 선택했습니다. Ctrl+C 또는 길게 눌러 복사해주세요.');
+    toast(ui('주소를 선택했습니다. Ctrl+C 또는 길게 눌러 복사해주세요.'));
   }
 });
 

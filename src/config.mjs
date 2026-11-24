@@ -8,6 +8,15 @@ export const config = {
   releaseStatus: 'released',
   plannedVersion: '1.0',
   storeUrl: 'https://apps.microsoft.com/detail/9NKD9SB9HXMM',
+  // Current Windows offers confirmed by the owner on 2026-11-24.
+  // The version/date below describe the separately verified historical release record.
+  windowsEditions: {
+    proStoreUrl: 'https://apps.microsoft.com/detail/9PFRH9QLST85',
+    trialDays: 30,
+    proPriceUSD: 15.99,
+    blockLimit: 500,
+    mediaLimit: 15,
+  },
   releaseVersion: '1.0.2.0',
   releaseDate: '2026-11-06',
   publicSiteUrl: 'https://dpnzdy.github.io/ZinniaSharkNote/',

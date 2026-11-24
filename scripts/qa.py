@@ -12,7 +12,7 @@ reports=[]
 settings=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {config} from './src/config.mjs'; console.log(JSON.stringify(config))"],cwd=ROOT,encoding='utf-8'))
 with sync_playwright() as p:
     browser=p.chromium.launch(channel='msedge',headless=True)
-    context=browser.new_context(viewport={'width':1440,'height':1000},device_scale_factor=1,accept_downloads=True)
+    context=browser.new_context(locale='ko-KR',viewport={'width':1440,'height':1000},device_scale_factor=1,accept_downloads=True)
     page=context.new_page()
     errors=[]
     page.on('pageerror',lambda error:errors.append(str(error)))
@@ -68,13 +68,14 @@ with sync_playwright() as p:
     saved.unlink()
 
     page.goto(BASE+'support.html',wait_until='networkidle')
+    faq_count = page.locator('.faq-item').count()
+    assert page.locator('.faq-item:visible').count() == faq_count
     page.locator('#faq-search').fill('비밀번호')
-    assert page.locator('.faq-item:visible').count()>0
-    assert page.locator('.faq-item:visible').count()<12
+    assert 0 < page.locator('.faq-item:visible').count() < faq_count
     page.locator('#faq-search').fill('no-results-12345')
     assert page.locator('.faq-empty').is_visible()
     page.locator('[data-clear-search]').click()
-    assert page.locator('.faq-item:visible').count()==12
+    assert page.locator('.faq-item:visible').count() == faq_count
     first=page.locator('.faq-item').first
     first.locator('summary').press('Enter')
     assert first.get_attribute('open') is not None
@@ -103,25 +104,26 @@ with sync_playwright() as p:
     assert page.locator('.guide-sidebar a[href="#save"]').get_attribute('aria-current')=='location'
     page.goto(BASE+'download.html',wait_until='networkidle')
     if settings['releaseStatus']=='released':
-        store=page.locator('a.store-button')
+        store=page.locator('a.store-button[data-edition=free]').first
         assert store.get_attribute('href')==settings['storeUrl']
         assert store.get_attribute('target')=='_blank'
         assert store.get_attribute('rel')=='noopener'
-        assert settings['releaseVersion'] in page.locator('main').inner_text()
-        assert page.locator('time').first.get_attribute('datetime')==settings['releaseDate']
+        assert page.locator('.store-card a[data-edition=pro]').get_attribute('href')==settings['windowsEditions']['proStoreUrl']
+        assert 'USD $15.99' in page.locator('#editions').inner_text()
+        assert '500' in page.locator('#editions').inner_text() and '15' in page.locator('#editions').inner_text()
         assert '출시 준비 중' not in page.locator('main').inner_text()
         page.goto(BASE,wait_until='networkidle')
-        assert page.locator('.hero-actions [data-store-link]').get_attribute('href')==settings['storeUrl']
+        assert page.locator('.hero-actions [data-store-link]').first.get_attribute('href')==settings['storeUrl']
         # Check the actual anchor navigation without opening the external Store application.
         context.route('https://apps.microsoft.com/detail/**',lambda route:route.fulfill(status=200,content_type='text/html',body='<title>Store link navigation check</title>'))
         with page.expect_popup() as store_popup:
-            page.locator('.hero-actions [data-store-link]').click()
+            page.locator('.hero-actions [data-store-link]').first.click()
         store_page=store_popup.value
         store_page.wait_for_load_state('load')
         assert store_page.url==settings['storeUrl']
         store_page.close()
         page.goto(BASE+'releases.html',wait_until='networkidle')
-        assert settings['releaseVersion'] in page.locator('h2').first.inner_text()
+        assert settings['releaseVersion'] in page.locator('#release-history h2').inner_text()
         assert page.locator('time').get_attribute('datetime')==settings['releaseDate']
     else:
         assert page.locator('.store-button').is_disabled()
